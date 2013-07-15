@@ -3,10 +3,13 @@ QRCodeReaderView
 
 Modification of ZXING Barcode Scanner project for easy Android QR-Code detection in portrait mode and AR purposes
 
-Original work can be found here: https://code.google.com/p/zxing/
-
 ---
+This project implements an Android view which show camera and notify when there's a QR code inside the preview.
 
+Some Classes are taken and slightly modified from Barcode Scanner
+
+Original work and code can be found here: https://code.google.com/p/zxing/
+---
 How to use:
 
 - Add library to your project.
@@ -14,12 +17,13 @@ How to use:
 - Create an Activity which implements onQRCodeReadListener, and let implements required methods
 - Make sure Activity orientation is PORTRAIT and give Camera permision in the manifest.xml
 - Drag&Drop a "QRCodeReaderView" in the layout editor from "Custom & library views" like you actually do with a button for example
+
 ![Image](../master/readme_images/add_view.png?raw=true)
+
 - In your onCreate method, you can find the view as usual, using findViewById() function.
 - Set onQRCodeReadListener to the QRCodeReaderView.
 - Start & Stop camera preview in onPause() and onResume() overriden methods.
 - Use onQRCodeReadListener callbacks as you want
-
 Example included in this repository:
 
 ```java
