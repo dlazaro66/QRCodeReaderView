@@ -28,8 +28,12 @@ How to use:
 - In your onCreate method, you can find the view as usual, using findViewById() function.
 - Set onQRCodeReadListener to the QRCodeReaderView.
 - Start & Stop camera preview in onPause() and onResume() overriden methods.
-- Use onQRCodeReadListener callbacks as you want
-Example included in this repository:
+- Use onQRCodeReadListener callbacks as you want.
+- You can place averlay widgets or views over QRDecoderView
+ 
+![Image](../master/readme_images/add_overlay.png?raw=true)
+
+##### Example included in this repository: #####
 
 ```java
 	public class DecoderActivity extends Activity implements OnQRCodeReadListener {
@@ -83,3 +87,6 @@ Example included in this repository:
 	}
 }
 ```
+
+
+![Image](../master/readme_images/app_example.png?raw=true)
