@@ -11,13 +11,14 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener;
 public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     private TextView myTextView;
+	private QRCodeReaderView mydecoderview;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decoder);
         
-        QRCodeReaderView mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
+        mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
         
         myTextView = (TextView) findViewById(R.id.exampleTextView);
@@ -45,4 +46,15 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 		
 	}
     
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mydecoderview.getCameraManager().startPreview();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mydecoderview.getCameraManager().stopPreview();
+	}
 }
