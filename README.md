@@ -1,14 +1,19 @@
 QRCodeReaderView
 ================
 
-Modification of ZXING Barcode Scanner project for easy Android QR-Code detection in portrait mode and AR purposes
+#### Modification of ZXING Barcode Scanner project for easy Android QR-Code detection in portrait mode and AR purposes. ####
 
 ---
 This project implements an Android view which show camera and notify when there's a QR code inside the preview.
 
-Some Classes are taken and slightly modified from Barcode Scanner
+Some Classes of camera controls and autofocus are taken and slightly modified from Barcode Scanner Android App.
+
+The Library uses a "core.jar" file, which has been generated with ant tool cloning authors repository. It's recommended to generate core.jar again and integrate it into the project.
+
+You can also use this for Augmented Reality purposes, as you get QR control points coordinates when decoding.
 
 Original work and code can be found here: https://code.google.com/p/zxing/
+
 ---
 How to use:
 
