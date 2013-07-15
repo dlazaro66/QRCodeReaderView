@@ -14,6 +14,7 @@ How to use:
 - Create an Activity which implements onQRCodeReadListener, and let implements required methods
 - Make sure Activity orientation is PORTRAIT and give Camera permision in the manifest.xml
 - Drag&Drop a "QRCodeReaderView" in the layout editor from "Custom & library views" like you actually do with a button for example
+![Image](../readme_images/add_view.png?raw=true)
 - In your onCreate method, you can find the view as usual, using findViewById() function.
 - Set onQRCodeReadListener to the QRCodeReaderView.
 - Start & Stop camera preview in onPause() and onResume() overriden methods.
