@@ -23,7 +23,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
 /*
-*       Copyright 2013 David L‡zaro Esparcia.
+*       Copyright 2013 David Lï¿½zaro Esparcia.
 *
 *       This program is free software: you can redistribute it and/or
 modify
@@ -50,7 +50,7 @@ License
  * QRCodeReaderView - Class which uses ZXING lib and let you easily integrate a QR decoder view.
  * Take some classes and made some modifications in the original ZXING - Barcode Scanner project.  
  *
- * @author David L‡zaro
+ * @author David Lï¿½zaro
  */
 public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callback,Camera.PreviewCallback {
 
@@ -131,6 +131,9 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d(TAG, "surfaceDestroyed");
+		mCameraManager.getCamera().setPreviewCallback(null);
+		mCameraManager.getCamera().stopPreview();
+		mCameraManager.getCamera().release();
 		mCameraManager.closeDriver();
 	}
 	
