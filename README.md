@@ -15,6 +15,9 @@ You can also use this for Augmented Reality purposes, as you get QR control poin
 Original work and code can be found here: https://code.google.com/p/zxing/
 
 ---
+From now, this project is licensed under the Apache License v2.0, the same as original project. It is not a copyleft license like the GPL; it is relatively generous about what you can do with the code.
+
+---
 How to use:
 
 - Add library to your project.
