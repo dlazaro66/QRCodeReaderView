@@ -140,6 +140,7 @@ Contributors
 ------------
 * [David Lázaro Esparcia][2]
 * [Daniel Comas Fernández][3]
+* [Kirill Boyarshinov][4]
 
 License
 -------
@@ -162,6 +163,7 @@ License
 [1]: https://github.com/zxing/zxing/
 [2]: https://github.com/dlazaro66
 [3]: https://github.com/danicomas
+[4]: https://github.com/kboyarshinov
 
 
 
