@@ -136,6 +136,8 @@ Who's using it
 
 *Does your app use QRCodeReaderView? If you want to be featured on this list drop me a line.*
 
+* [Swapcard][5]
+
 Contributors
 ------------
 * [David Lázaro Esparcia][2]
@@ -164,6 +166,7 @@ License
 [2]: https://github.com/dlazaro66
 [3]: https://github.com/danicomas
 [4]: https://github.com/kboyarshinov
+[5]: https://www.swapcard.com/
 
 
 
