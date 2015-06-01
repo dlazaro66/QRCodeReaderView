@@ -126,7 +126,7 @@ Developed By
 <a href="https://twitter.com/_dlazaro">
   <img alt="Follow me on Twitter" src="http://imageshack.us/a/img812/3923/smallth.png" />
 </a>
-<a href="https://www.linkedin.com/pub/david-l%C3%A1zaro-esparcia/">
+<a href="https://es.linkedin.com/pub/david-lázaro-esparcia/49/4b3/342">
   <img alt="Add me to Linkedin" src="http://imageshack.us/a/img41/7877/smallld.png" />
 </a>
 
