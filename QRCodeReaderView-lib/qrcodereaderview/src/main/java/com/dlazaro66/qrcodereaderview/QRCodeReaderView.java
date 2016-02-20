@@ -66,6 +66,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
     private int mPreviewHeight;
     private SurfaceHolder mHolder;
     private CameraManager mCameraManager;
+	private static int id = 0;
 
 	public QRCodeReaderView(Context context) {
 		super(context);
@@ -111,7 +112,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 	public void surfaceCreated(SurfaceHolder holder) {
 		try {
 			// Indicate camera, our View dimensions
-			mCameraManager.openDriver(holder,this.getWidth(),this.getHeight());
+			mCameraManager.openDriver(holder,this.getWidth(),this.getHeight(), id);
 		} catch (IOException e) {
 			Log.w(TAG, "Can not openDriver: "+e.getMessage());
 			mCameraManager.closeDriver();
@@ -257,7 +258,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
     public static void setCameraDisplayOrientation(Context context, android.hardware.Camera camera) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
             Camera.CameraInfo info = new Camera.CameraInfo();
-            android.hardware.Camera.getCameraInfo(0, info);
+            android.hardware.Camera.getCameraInfo(id, info);
             WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             int rotation = windowManager.getDefaultDisplay().getRotation();
             int degrees = 0;
@@ -278,5 +279,9 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
             camera.setDisplayOrientation(result);
         }
     }
-    
+
+
+	public static void setCameraId(int newId) {
+		id = newId;
+	}
 }

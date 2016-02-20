@@ -24,6 +24,6 @@ import android.hardware.Camera;
  */
 public interface OpenCameraInterface {
 
-  Camera open();
+  Camera open(int id);
 
 }
