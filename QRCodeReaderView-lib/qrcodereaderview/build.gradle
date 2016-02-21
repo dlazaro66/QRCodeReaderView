@@ -5,7 +5,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
-        classpath 'com.github.dcendents:android-maven-plugin:1.2'
+        /* http://stackoverflow.com/questions/32988669/how-to-solve-gradle-sync-failed-error-defaultmavenfactory */
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
     }
 }
 

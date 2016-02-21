@@ -30,10 +30,11 @@ public final class GingerbreadOpenCameraInterface implements OpenCameraInterface
   private static final String TAG = "GingerbreadOpenCamera";
 
   /**
-   * Opens a rear-facing camera with {@link Camera#open(int)}, if one exists, or opens camera 0.
+   * Opens the camera with the specified id, if provided with a valid id. For an invalid id, opens a
+   * rear-facing camera, if one exists, or opens camera 0. Uses {@link Camera#open(int)}.
    */
   @Override
-  public Camera open() {
+  public Camera open(int id) {
     
     int numCameras = Camera.getNumberOfCameras();
     if (numCameras == 0) {
@@ -52,7 +53,10 @@ public final class GingerbreadOpenCameraInterface implements OpenCameraInterface
     }
     
     Camera camera;
-    if (index < numCameras) {
+    if (id >= 0 && id < numCameras) {
+      camera = Camera.open(id);
+      Log.i(TAG, "User specified id : "+id);
+    } else if (index < numCameras) {
       Log.i(TAG, "Opening camera #" + index);
       camera = Camera.open(index);
     } else {

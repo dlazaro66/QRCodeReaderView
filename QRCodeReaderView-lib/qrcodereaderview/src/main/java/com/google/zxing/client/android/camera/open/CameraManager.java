@@ -71,10 +71,11 @@ public final class CameraManager {
    * @param holder The surface object which the camera will draw preview frames into.
    * @throws IOException Indicates the camera driver failed to open.
    */
-  public synchronized void openDriver(SurfaceHolder holder,int viewWidth,int viewHeight) throws IOException {
+  public synchronized void openDriver(SurfaceHolder holder,int viewWidth,int viewHeight, int id) throws IOException {
     Camera theCamera = camera;
     if (theCamera == null) {
-      theCamera = new OpenCameraManager().build().open();
+      /* For >= SDK 9, opens the camera with the specified id, otherwise, just opens the default camera. */
+      theCamera = new OpenCameraManager().build().open(id);
       if (theCamera == null) {
         throw new IOException();
       }

@@ -45,6 +45,9 @@ How to use:
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decoder);
         
+        // set camera id explicity, maybe to open a front camera
+        QRCodeReaderView.setCameraId(/* new id */);
+
         mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
         
@@ -87,6 +90,7 @@ How to use:
 }
 ```
 
+You can find the id for the front facing camera using the code given [here](http://stackoverflow.com/questions/2779002/how-to-open-front-camera-on-android-platform).
 
 Add it to your project
 ----------------------
