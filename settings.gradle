@@ -1,2 +1,2 @@
-include ':QR-ReaderExample:qRReaderExample'
-include ':QRCodeReaderView-lib:qrcodereaderview'
+include ':samples'
+include ':qrcodereaderview'
