@@ -1,8 +1,8 @@
 buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
 }
 
 apply plugin: 'com.android.library'
@@ -11,26 +11,25 @@ version = "1.0.0"
 group = "com.dlazaro66.qrcodereaderview"
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+  compileSdkVersion 21
+  buildToolsVersion "21.1.2"
 
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 1
-        versionName version
+  defaultConfig {
+    minSdkVersion 8
+    targetSdkVersion 21
+    versionCode 1
+    versionName version
+  }
 
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
+  }
 }
 
 dependencies {
-    compile 'com.google.zxing:core:3.2.1'
+  compile 'com.google.zxing:core:3.2.1'
 }
 

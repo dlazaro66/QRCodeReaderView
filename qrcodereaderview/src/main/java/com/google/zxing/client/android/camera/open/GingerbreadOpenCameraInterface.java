@@ -21,20 +21,19 @@ import android.hardware.Camera;
 import android.util.Log;
 
 /**
- * Implementation for Android API 9 (Gingerbread) and later. This opens up the possibility of accessing
+ * Implementation for Android API 9 (Gingerbread) and later. This opens up the possibility of
+ * accessing
  * front cameras, and rotated cameras.
  */
-@TargetApi(9)
-public final class GingerbreadOpenCameraInterface implements OpenCameraInterface {
+@TargetApi(9) public final class GingerbreadOpenCameraInterface implements OpenCameraInterface {
 
   private static final String TAG = "GingerbreadOpenCamera";
 
   /**
    * Opens a rear-facing camera with {@link Camera#open(int)}, if one exists, or opens camera 0.
    */
-  @Override
-  public Camera open() {
-    
+  @Override public Camera open() {
+
     int numCameras = Camera.getNumberOfCameras();
     if (numCameras == 0) {
       Log.w(TAG, "No cameras!");
@@ -50,7 +49,7 @@ public final class GingerbreadOpenCameraInterface implements OpenCameraInterface
       }
       index++;
     }
-    
+
     Camera camera;
     if (index < numCameras) {
       Log.i(TAG, "Opening camera #" + index);
@@ -62,5 +61,4 @@ public final class GingerbreadOpenCameraInterface implements OpenCameraInterface
 
     return camera;
   }
-
 }

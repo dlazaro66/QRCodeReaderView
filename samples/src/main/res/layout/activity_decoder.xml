@@ -2,31 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DecoderActivity" >
+    tools:context=".DecoderActivity"
+    >
 
-    <com.dlazaro66.qrcodereaderview.QRCodeReaderView
-        android:id="@+id/qrdecoderview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
+  <com.dlazaro66.qrcodereaderview.QRCodeReaderView
+      android:id="@+id/qrdecoderview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentTop="true"
+      />
 
-    <TextView
-        android:id="@+id/exampleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+  <TextView
+      android:id="@+id/exampleTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="20dp"
+      android:text="Large Text"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      />
 
-    <ImageView
-        android:id="@+id/red_line_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/exampleTextView"
-        android:src="@drawable/red_line" />
+  <ImageView
+      android:id="@+id/red_line_image"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_below="@+id/exampleTextView"
+      android:src="@drawable/red_line"
+      />
 
 </RelativeLayout>
