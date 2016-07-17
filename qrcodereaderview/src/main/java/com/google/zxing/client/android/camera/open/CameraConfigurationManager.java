@@ -16,16 +16,15 @@
 
 package com.google.zxing.client.android.camera.open;
 
+import android.content.Context;
+import android.graphics.Point;
+import android.hardware.Camera;
+import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import android.content.Context;
-import android.graphics.Point;
-import android.hardware.Camera;
-import android.util.Log;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to
@@ -50,24 +49,24 @@ final class CameraConfigurationManager {
   /**
    * Reads, one time, values from the camera that are needed by the app.
    */
-  void initFromCameraParameters(Camera camera,int viewWidth,int viewHeight) {
+  void initFromCameraParameters(Camera camera, int viewWidth, int viewHeight) {
     Camera.Parameters parameters = camera.getParameters();
-    
+
     int width = viewWidth;
     int height = viewHeight;
-    
+
     screenResolution = new Point(width, height);
     Log.i(TAG, "Screen resolution: " + screenResolution);
     cameraResolution = findBestPreviewSizeValue(parameters, screenResolution);
     Log.i(TAG, "Camera resolution: " + cameraResolution);
-    
   }
 
   void setDesiredCameraParameters(Camera camera, boolean safeMode) {
     Camera.Parameters parameters = camera.getParameters();
 
     if (parameters == null) {
-      Log.w(TAG, "Device error: no camera parameters are available. Proceeding without configuration.");
+      Log.w(TAG,
+          "Device error: no camera parameters are available. Proceeding without configuration.");
       return;
     }
 
@@ -80,12 +79,12 @@ final class CameraConfigurationManager {
     // All references to SharedPreferences are removed from here
 
     String focusMode = null;
-   
+
     // Maybe selected auto-focus but not available, so fall through here:
     if (!safeMode && focusMode == null) {
-      focusMode = findSettableValue(parameters.getSupportedFocusModes(),
-                                    Camera.Parameters.FOCUS_MODE_MACRO,
-                                    "edof"); // Camera.Parameters.FOCUS_MODE_EDOF in 2.2+
+      focusMode =
+          findSettableValue(parameters.getSupportedFocusModes(), Camera.Parameters.FOCUS_MODE_MACRO,
+              "edof"); // Camera.Parameters.FOCUS_MODE_EDOF in 2.2+
     }
     if (focusMode != null) {
       parameters.setFocusMode(focusMode);
@@ -102,7 +101,6 @@ final class CameraConfigurationManager {
   Point getScreenResolution() {
     return screenResolution;
   }
-  
 
   // All references to Torch are removed from here, methods, variables...
 
@@ -118,8 +116,7 @@ final class CameraConfigurationManager {
     // Sort by size, descending
     List<Camera.Size> supportedPreviewSizes = new ArrayList<Camera.Size>(rawSupportedSizes);
     Collections.sort(supportedPreviewSizes, new Comparator<Camera.Size>() {
-      @Override
-      public int compare(Camera.Size a, Camera.Size b) {
+      @Override public int compare(Camera.Size a, Camera.Size b) {
         int aPixels = a.height * a.width;
         int bPixels = b.height * b.width;
         if (bPixels < aPixels) {
@@ -135,8 +132,10 @@ final class CameraConfigurationManager {
     if (Log.isLoggable(TAG, Log.INFO)) {
       StringBuilder previewSizesString = new StringBuilder();
       for (Camera.Size supportedPreviewSize : supportedPreviewSizes) {
-        previewSizesString.append(supportedPreviewSize.width).append('x')
-            .append(supportedPreviewSize.height).append(' ');
+        previewSizesString.append(supportedPreviewSize.width)
+            .append('x')
+            .append(supportedPreviewSize.height)
+            .append(' ');
       }
       Log.i(TAG, "Supported preview sizes: " + previewSizesString);
     }
@@ -152,12 +151,12 @@ final class CameraConfigurationManager {
       if (pixels < MIN_PREVIEW_PIXELS || pixels > MAX_PREVIEW_PIXELS) {
         continue;
       }
-      
+
       // This code is modified since We're using portrait mode
       boolean isCandidateLandscape = realWidth > realHeight;
       int maybeFlippedWidth = isCandidateLandscape ? realHeight : realWidth;
       int maybeFlippedHeight = isCandidateLandscape ? realWidth : realHeight;
-      
+
       if (maybeFlippedWidth == screenResolution.x && maybeFlippedHeight == screenResolution.y) {
         Point exactPoint = new Point(realWidth, realHeight);
         Log.i(TAG, "Found preview size exactly matching screen size: " + exactPoint);
@@ -182,7 +181,7 @@ final class CameraConfigurationManager {
   }
 
   private static String findSettableValue(Collection<String> supportedValues,
-                                          String... desiredValues) {
+      String... desiredValues) {
     Log.i(TAG, "Supported values: " + supportedValues);
     String result = null;
     if (supportedValues != null) {
@@ -196,5 +195,4 @@ final class CameraConfigurationManager {
     Log.i(TAG, "Settable value: " + result);
     return result;
   }
-
 }
