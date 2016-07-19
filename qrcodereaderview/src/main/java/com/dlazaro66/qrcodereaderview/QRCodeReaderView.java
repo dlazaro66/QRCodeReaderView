@@ -48,11 +48,11 @@ public class QRCodeReaderView extends SurfaceView
 
   public interface OnQRCodeReadListener {
 
-    public void onQRCodeRead(String text, PointF[] points);
+    void onQRCodeRead(String text, PointF[] points);
 
-    public void cameraNotFound();
+    void cameraNotFound();
 
-    public void QRCodeNotFoundOnCamImage();
+    void QRCodeNotFoundOnCamImage();
   }
 
   private OnQRCodeReadListener mOnQRCodeReadListener;
@@ -64,6 +64,7 @@ public class QRCodeReaderView extends SurfaceView
   private int mPreviewHeight;
   private SurfaceHolder mHolder;
   private CameraManager mCameraManager;
+  private boolean mQrDecodingEnabled = true;
 
   public QRCodeReaderView(Context context) {
     super(context);
@@ -77,6 +78,10 @@ public class QRCodeReaderView extends SurfaceView
 
   public void setOnQRCodeReadListener(OnQRCodeReadListener onQRCodeReadListener) {
     mOnQRCodeReadListener = onQRCodeReadListener;
+  }
+
+  public void setQRDecodingEnabled(boolean qrDecodingEnabled) {
+    this.mQrDecodingEnabled = qrDecodingEnabled;
   }
 
   public CameraManager getCameraManager() {
@@ -131,6 +136,9 @@ public class QRCodeReaderView extends SurfaceView
 
   // Called when camera take a frame
   @Override public void onPreviewFrame(byte[] data, Camera camera) {
+    if (!mQrDecodingEnabled) {
+      return;
+    }
 
     PlanarYUVLuminanceSource source =
         mCameraManager.buildLuminanceSource(data, mPreviewWidth, mPreviewHeight);
@@ -198,7 +206,6 @@ public class QRCodeReaderView extends SurfaceView
    * @return a new PointF array with transformed points
    */
   private PointF[] transformToViewCoordinates(ResultPoint[] resultPoints) {
-
     PointF[] transformedPoints = new PointF[resultPoints.length];
     int index = 0;
     if (resultPoints != null) {
