@@ -46,6 +46,7 @@ public final class CameraManager {
   private AutoFocusManager autoFocusManager;
   private boolean initialized;
   private boolean previewing;
+  private Camera.PreviewCallback previewCallback;
 
   // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
   // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
@@ -55,8 +56,16 @@ public final class CameraManager {
     this.configManager = new CameraConfigurationManager(context);
   }
 
-  public Camera getCamera() {
-    return camera;
+  public void setPreviewCallback(Camera.PreviewCallback previewCallback) {
+    this.previewCallback = previewCallback;
+
+    if (camera != null) {
+      camera.setPreviewCallback(previewCallback);
+    }
+  }
+
+  public void setDisplayOrientation(int degrees) {
+    camera.setDisplayOrientation(degrees);
   }
 
   public Point getPreviewSize() {
@@ -80,6 +89,7 @@ public final class CameraManager {
       camera = theCamera;
     }
     theCamera.setPreviewDisplay(holder);
+    theCamera.setPreviewCallback(previewCallback);
 
     if (!initialized) {
       initialized = true;

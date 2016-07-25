@@ -36,6 +36,19 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
     mAnimation.setRepeatMode(Animation.REVERSE);
     mAnimation.setInterpolator(new LinearInterpolator());
     line_image.setAnimation(mAnimation);
+
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+
+    mydecoderview.startCamera();
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+
+    mydecoderview.stopCamera();
   }
 
   // Called when a QR is decoded
@@ -43,25 +56,5 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
   // "points" : points where QR control points are placed
   @Override public void onQRCodeRead(String text, PointF[] points) {
     myTextView.setText(text);
-  }
-
-  // Called when your device have no camera
-  @Override public void cameraNotFound() {
-
-  }
-
-  // Called when there's no QR codes in the camera preview image
-  @Override public void QRCodeNotFoundOnCamImage() {
-
-  }
-
-  @Override protected void onResume() {
-    super.onResume();
-    mydecoderview.getCameraManager().startPreview();
-  }
-
-  @Override protected void onPause() {
-    super.onPause();
-    mydecoderview.getCameraManager().stopPreview();
   }
 }

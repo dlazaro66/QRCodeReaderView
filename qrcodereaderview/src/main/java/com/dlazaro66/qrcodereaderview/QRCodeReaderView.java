@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Surface;
@@ -36,6 +37,7 @@ import com.google.zxing.client.android.camera.open.CameraManager;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 /**
  * QRCodeReaderView - Class which uses ZXING lib and let you easily integrate a QR decoder view.
@@ -49,10 +51,6 @@ public class QRCodeReaderView extends SurfaceView
   public interface OnQRCodeReadListener {
 
     void onQRCodeRead(String text, PointF[] points);
-
-    void cameraNotFound();
-
-    void QRCodeNotFoundOnCamImage();
   }
 
   private OnQRCodeReadListener mOnQRCodeReadListener;
@@ -62,18 +60,25 @@ public class QRCodeReaderView extends SurfaceView
   private QRCodeReader mQRCodeReader;
   private int mPreviewWidth;
   private int mPreviewHeight;
-  private SurfaceHolder mHolder;
   private CameraManager mCameraManager;
   private boolean mQrDecodingEnabled = true;
+  private DecodeFrameTask decodeFrameTask;
 
   public QRCodeReaderView(Context context) {
-    super(context);
-    init();
+    this(context, null);
   }
 
   public QRCodeReaderView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init();
+
+    if (checkCameraHardware()) {
+      mCameraManager = new CameraManager(getContext());
+      mCameraManager.setPreviewCallback(this);
+
+      getHolder().addCallback(this);
+    } else {
+      throw new RuntimeException("Error: Camera not found");
+    }
   }
 
   public void setOnQRCodeReadListener(OnQRCodeReadListener onQRCodeReadListener) {
@@ -84,23 +89,20 @@ public class QRCodeReaderView extends SurfaceView
     this.mQrDecodingEnabled = qrDecodingEnabled;
   }
 
-  public CameraManager getCameraManager() {
-    return mCameraManager;
+  public void startCamera() {
+    mCameraManager.startPreview();
   }
 
-  @SuppressWarnings("deprecation") private void init() {
-    if (checkCameraHardware(getContext())) {
-      mCameraManager = new CameraManager(getContext());
+  public void stopCamera() {
+    mCameraManager.stopPreview();
+  }
 
-      mHolder = this.getHolder();
-      mHolder.addCallback(this);
-      mHolder.setType(
-          SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);  // Need to set this flag despite it's deprecated
-    } else {
-      Log.e(TAG, "Error: Camera not found");
-      if (mOnQRCodeReadListener != null) {
-        mOnQRCodeReadListener.cameraNotFound();
-      }
+  @Override public void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+
+    if (decodeFrameTask != null) {
+      decodeFrameTask.cancel(true);
+      decodeFrameTask = null;
     }
   }
 
@@ -109,6 +111,8 @@ public class QRCodeReaderView extends SurfaceView
    ****************************************************/
 
   @Override public void surfaceCreated(SurfaceHolder holder) {
+    Log.d(TAG, "surfaceCreated");
+
     try {
       // Indicate camera, our View dimensions
       mCameraManager.openDriver(holder, this.getWidth(), this.getHeight());
@@ -126,112 +130,60 @@ public class QRCodeReaderView extends SurfaceView
     }
   }
 
-  @Override public void surfaceDestroyed(SurfaceHolder holder) {
-    Log.d(TAG, "surfaceDestroyed");
-    mCameraManager.getCamera().setPreviewCallback(null);
-    mCameraManager.getCamera().stopPreview();
-    mCameraManager.getCamera().release();
-    mCameraManager.closeDriver();
-  }
-
-  // Called when camera take a frame
-  @Override public void onPreviewFrame(byte[] data, Camera camera) {
-    if (!mQrDecodingEnabled) {
-      return;
-    }
-
-    PlanarYUVLuminanceSource source =
-        mCameraManager.buildLuminanceSource(data, mPreviewWidth, mPreviewHeight);
-
-    HybridBinarizer hybBin = new HybridBinarizer(source);
-    BinaryBitmap bitmap = new BinaryBitmap(hybBin);
-
-    try {
-      Result result = mQRCodeReader.decode(bitmap);
-
-      // Notify we found a QRCode
-      if (mOnQRCodeReadListener != null) {
-        // Transform resultPoints to View coordinates
-        PointF[] transformedPoints = transformToViewCoordinates(result.getResultPoints());
-        mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
-      }
-    } catch (ChecksumException e) {
-      Log.d(TAG, "ChecksumException");
-      e.printStackTrace();
-    } catch (NotFoundException e) {
-      // Notify QR not found
-      if (mOnQRCodeReadListener != null) {
-        mOnQRCodeReadListener.QRCodeNotFoundOnCamImage();
-      }
-    } catch (FormatException e) {
-      Log.d(TAG, "FormatException");
-      e.printStackTrace();
-    } finally {
-      mQRCodeReader.reset();
-    }
-  }
-
   @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     Log.d(TAG, "surfaceChanged");
 
-    if (mHolder.getSurface() == null) {
+    if (holder.getSurface() == null) {
       Log.e(TAG, "Error: preview surface does not exist");
       return;
     }
 
-    //preview_width = width;
-    //preview_height = height;
+    if (mCameraManager.getPreviewSize() == null) {
+      Log.e(TAG, "Error: preview size does not exist");
+      return;
+    }
 
     mPreviewWidth = mCameraManager.getPreviewSize().x;
     mPreviewHeight = mCameraManager.getPreviewSize().y;
 
     mCameraManager.stopPreview();
-    mCameraManager.getCamera().setPreviewCallback(this);
-    mCameraManager.getCamera().setDisplayOrientation(90); // Portrait mode
 
     // Fix the camera sensor rotation
-    setCameraDisplayOrientation(this.getContext(), mCameraManager.getCamera());
+    mCameraManager.setDisplayOrientation(getCameraDisplayOrientation());
 
     mCameraManager.startPreview();
   }
 
-  /**
-   * Transform result to surfaceView coordinates
-   *
-   * This method is needed because coordinates are given in landscape camera coordinates.
-   * Now is working but transform operations aren't very explained
-   *
-   * TODO re-write this method explaining each single value
-   *
-   * @return a new PointF array with transformed points
-   */
-  private PointF[] transformToViewCoordinates(ResultPoint[] resultPoints) {
-    PointF[] transformedPoints = new PointF[resultPoints.length];
-    int index = 0;
-    if (resultPoints != null) {
-      float previewX = mCameraManager.getPreviewSize().x;
-      float previewY = mCameraManager.getPreviewSize().y;
-      float scaleX = this.getWidth() / previewY;
-      float scaleY = this.getHeight() / previewX;
+  @Override public void surfaceDestroyed(SurfaceHolder holder) {
+    Log.d(TAG, "surfaceDestroyed");
 
-      for (ResultPoint point : resultPoints) {
-        PointF tmppoint = new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
-        transformedPoints[index] = tmppoint;
-        index++;
-      }
+    mCameraManager.setPreviewCallback(null);
+    mCameraManager.stopPreview();
+    mCameraManager.closeDriver();
+  }
+
+  // Called when camera take a frame
+  @Override public void onPreviewFrame(byte[] data, Camera camera) {
+    if (!mQrDecodingEnabled || (decodeFrameTask != null
+        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
+      return;
     }
-    return transformedPoints;
+
+    decodeFrameTask = new DecodeFrameTask(this);
+    decodeFrameTask.execute(data);
   }
 
   /** Check if this device has a camera */
-  private boolean checkCameraHardware(Context context) {
-    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+  private boolean checkCameraHardware() {
+    if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
       // this device has a camera
       return true;
-    } else if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+    } else if (getContext().getPackageManager()
+        .hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
       // this device has a front camera
       return true;
-    } else if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+    } else if (getContext().getPackageManager()
+        .hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
       // this device has any camera
       return true;
     } else {
@@ -241,41 +193,122 @@ public class QRCodeReaderView extends SurfaceView
   }
 
   /**
-   * Fix for the camera Sensor no some devices (ex.: Nexus 5x)
+   * Fix for the camera Sensor on some devices (ex.: Nexus 5x)
    * http://developer.android.com/intl/pt-br/reference/android/hardware/Camera.html#setDisplayOrientation(int)
    */
-  @SuppressWarnings("deprecation") public static void setCameraDisplayOrientation(Context context,
-      android.hardware.Camera camera) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
-      Camera.CameraInfo info = new Camera.CameraInfo();
-      android.hardware.Camera.getCameraInfo(0, info);
-      WindowManager windowManager =
-          (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-      int rotation = windowManager.getDefaultDisplay().getRotation();
-      int degrees = 0;
-      switch (rotation) {
-        case Surface.ROTATION_0:
-          degrees = 0;
-          break;
-        case Surface.ROTATION_90:
-          degrees = 90;
-          break;
-        case Surface.ROTATION_180:
-          degrees = 180;
-          break;
-        case Surface.ROTATION_270:
-          degrees = 270;
-          break;
+  @SuppressWarnings("deprecation") private int getCameraDisplayOrientation() {
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.GINGERBREAD) {
+      return 90;
+    }
+
+    Camera.CameraInfo info = new Camera.CameraInfo();
+    android.hardware.Camera.getCameraInfo(0, info);
+    WindowManager windowManager =
+        (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    int rotation = windowManager.getDefaultDisplay().getRotation();
+    int degrees = 0;
+    switch (rotation) {
+      case Surface.ROTATION_0:
+        degrees = 0;
+        break;
+      case Surface.ROTATION_90:
+        degrees = 90;
+        break;
+      case Surface.ROTATION_180:
+        degrees = 180;
+        break;
+      case Surface.ROTATION_270:
+        degrees = 270;
+        break;
+    }
+
+    int result;
+    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      result = (info.orientation + degrees) % 360;
+      result = (360 - result) % 360;  // compensate the mirror
+    } else {  // back-facing
+      result = (info.orientation - degrees + 360) % 360;
+    }
+    return result;
+  }
+
+  private static class DecodeFrameTask extends AsyncTask<byte[], Void, Result> {
+
+    private final WeakReference<QRCodeReaderView> viewRef;
+
+    public DecodeFrameTask(QRCodeReaderView view) {
+      viewRef = new WeakReference<>(view);
+    }
+
+    @Override protected Result doInBackground(byte[]... params) {
+      final QRCodeReaderView view = viewRef.get();
+      if (view == null) {
+        return null;
       }
 
-      int result;
-      if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-        result = (info.orientation + degrees) % 360;
-        result = (360 - result) % 360;  // compensate the mirror
-      } else {  // back-facing
-        result = (info.orientation - degrees + 360) % 360;
+      final PlanarYUVLuminanceSource source =
+          view.mCameraManager.buildLuminanceSource(params[0], view.mPreviewWidth,
+              view.mPreviewHeight);
+
+      final HybridBinarizer hybBin = new HybridBinarizer(source);
+      final BinaryBitmap bitmap = new BinaryBitmap(hybBin);
+
+      try {
+        return view.mQRCodeReader.decode(bitmap);
+      } catch (ChecksumException e) {
+        Log.e(TAG, "ChecksumException", e);
+      } catch (NotFoundException e) {
+        Log.d(TAG, "No QR Code found");
+      } catch (FormatException e) {
+        Log.e(TAG, "FormatException", e);
+      } finally {
+        view.mQRCodeReader.reset();
       }
-      camera.setDisplayOrientation(result);
+
+      return null;
+    }
+
+    @Override protected void onPostExecute(Result result) {
+      super.onPostExecute(result);
+
+      final QRCodeReaderView view = viewRef.get();
+
+      // Notify we found a QRCode
+      if (view != null && result != null && view.mOnQRCodeReadListener != null) {
+        // Transform resultPoints to View coordinates
+        final PointF[] transformedPoints =
+            transformToViewCoordinates(view, result.getResultPoints());
+        view.mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
+      }
+    }
+
+    /**
+     * Transform result to surfaceView coordinates
+     *
+     * This method is needed because coordinates are given in landscape camera coordinates.
+     * Now is working but transform operations aren't very explained
+     *
+     * TODO re-write this method explaining each single value
+     *
+     * @return a new PointF array with transformed points
+     */
+    private static PointF[] transformToViewCoordinates(QRCodeReaderView view,
+        ResultPoint[] resultPoints) {
+      PointF[] transformedPoints = new PointF[resultPoints.length];
+
+      int index = 0;
+      float previewX = view.mCameraManager.getPreviewSize().x;
+      float previewY = view.mCameraManager.getPreviewSize().y;
+      float scaleX = view.getWidth() / previewY;
+      float scaleY = view.getHeight() / previewX;
+
+      for (ResultPoint point : resultPoints) {
+        PointF tmpPoint = new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
+        transformedPoints[index] = tmpPoint;
+        index++;
+      }
+
+      return transformedPoints;
     }
   }
 }
