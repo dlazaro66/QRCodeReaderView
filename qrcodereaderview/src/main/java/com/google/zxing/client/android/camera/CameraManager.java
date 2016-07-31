@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.zxing.client.android.camera.open;
+package com.google.zxing.client.android.camera;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -22,6 +22,8 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.client.android.camera.open.OpenCamera;
+import com.google.zxing.client.android.camera.open.OpenCameraInterface;
 import java.io.IOException;
 
 /**
@@ -35,21 +37,18 @@ public final class CameraManager {
 
   private static final String TAG = CameraManager.class.getSimpleName();
 
-  // private static final int MIN_FRAME_WIDTH = 240;
-  // private static final int MIN_FRAME_HEIGHT = 240;
-  // private static final int MAX_FRAME_WIDTH = 600;
-  // private static final int MAX_FRAME_HEIGHT = 400;
-
   private final Context context;
   private final CameraConfigurationManager configManager;
-  private Camera camera;
+  private OpenCamera openCamera;
   private AutoFocusManager autoFocusManager;
   private boolean initialized;
   private boolean previewing;
   private Camera.PreviewCallback previewCallback;
+  private int displayOrientation = 0;
 
   // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
   // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
+  private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
 
   public CameraManager(Context context) {
     this.context = context;
@@ -59,13 +58,17 @@ public final class CameraManager {
   public void setPreviewCallback(Camera.PreviewCallback previewCallback) {
     this.previewCallback = previewCallback;
 
-    if (camera != null) {
-      camera.setPreviewCallback(previewCallback);
+    if (isOpen()) {
+      openCamera.getCamera().setPreviewCallback(previewCallback);
     }
   }
 
   public void setDisplayOrientation(int degrees) {
-    camera.setDisplayOrientation(degrees);
+    this.displayOrientation = degrees;
+
+    if (isOpen()) {
+      openCamera.getCamera().setDisplayOrientation(degrees);
+    }
   }
 
   public Point getPreviewSize() {
@@ -76,27 +79,29 @@ public final class CameraManager {
    * Opens the camera driver and initializes the hardware parameters.
    *
    * @param holder The surface object which the camera will draw preview frames into.
-   * @throws IOException Indicates the camera driver failed to open.
+   * @param height @throws IOException Indicates the camera driver failed to open.
    */
-  public synchronized void openDriver(SurfaceHolder holder, int viewWidth, int viewHeight)
+  public synchronized void openDriver(SurfaceHolder holder, int width, int height)
       throws IOException {
-    Camera theCamera = camera;
-    if (theCamera == null) {
-      theCamera = new OpenCameraManager().build().open();
-      if (theCamera == null) {
-        throw new IOException();
+    OpenCamera theCamera = openCamera;
+    if (!isOpen()) {
+      theCamera = OpenCameraInterface.open(requestedCameraId);
+      if (theCamera == null || theCamera.getCamera() == null) {
+        throw new IOException("Camera.open() failed to return object from driver");
       }
-      camera = theCamera;
+      openCamera = theCamera;
     }
-    theCamera.setPreviewDisplay(holder);
-    theCamera.setPreviewCallback(previewCallback);
+    theCamera.getCamera().setPreviewDisplay(holder);
+    theCamera.getCamera().setPreviewCallback(previewCallback);
+    theCamera.getCamera().setDisplayOrientation(displayOrientation);
 
     if (!initialized) {
       initialized = true;
-      configManager.initFromCameraParameters(theCamera, viewWidth, viewHeight);
+      configManager.initFromCameraParameters(theCamera, width, height);
     }
 
-    Camera.Parameters parameters = theCamera.getParameters();
+    Camera cameraObject = theCamera.getCamera();
+    Camera.Parameters parameters = cameraObject.getParameters();
     String parametersFlattened =
         parameters == null ? null : parameters.flatten(); // Save these, temporarily
     try {
@@ -107,10 +112,10 @@ public final class CameraManager {
       Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
       // Reset:
       if (parametersFlattened != null) {
-        parameters = theCamera.getParameters();
+        parameters = cameraObject.getParameters();
         parameters.unflatten(parametersFlattened);
         try {
-          theCamera.setParameters(parameters);
+          cameraObject.setParameters(parameters);
           configManager.setDesiredCameraParameters(theCamera, true);
         } catch (RuntimeException re2) {
           // Well, darn. Give up
@@ -118,19 +123,51 @@ public final class CameraManager {
         }
       }
     }
+    cameraObject.setPreviewDisplay(holder);
+  }
+
+  /**
+   * Allows third party apps to specify the camera ID, rather than determine
+   * it automatically based on available cameras and their orientation.
+   *
+   * @param cameraId camera ID of the camera to use. A negative value means "no preference".
+   */
+  public synchronized void setManualCameraId(int cameraId) {
+    requestedCameraId = cameraId;
+  }
+
+  /**
+   * @param newSetting if {@code true}, light should be turned on if currently off. And vice versa.
+   */
+  public synchronized void setTorch(boolean newSetting) {
+    OpenCamera theCamera = openCamera;
+    if (theCamera != null) {
+      if (newSetting != configManager.getTorchState(theCamera.getCamera())) {
+        boolean wasAutoFocusManager = autoFocusManager != null;
+        if (wasAutoFocusManager) {
+          autoFocusManager.stop();
+          autoFocusManager = null;
+        }
+        configManager.setTorch(theCamera.getCamera(), newSetting);
+        if (wasAutoFocusManager) {
+          autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
+          autoFocusManager.start();
+        }
+      }
+    }
   }
 
   public synchronized boolean isOpen() {
-    return camera != null;
+    return openCamera != null && openCamera.getCamera() != null;
   }
 
   /**
    * Closes the camera driver if still in use.
    */
   public synchronized void closeDriver() {
-    if (camera != null) {
-      camera.release();
-      camera = null;
+    if (isOpen()) {
+      openCamera.getCamera().release();
+      openCamera = null;
       // Make sure to clear these each time we close the camera, so that any scanning rect
       // requested by intent is forgotten.
       // framingRect = null;
@@ -142,11 +179,11 @@ public final class CameraManager {
    * Asks the camera hardware to begin drawing preview frames to the screen.
    */
   public synchronized void startPreview() {
-    Camera theCamera = camera;
+    OpenCamera theCamera = openCamera;
     if (theCamera != null && !previewing) {
-      theCamera.startPreview();
+      theCamera.getCamera().startPreview();
       previewing = true;
-      autoFocusManager = new AutoFocusManager(context, camera);
+      autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
     }
   }
 
@@ -158,16 +195,11 @@ public final class CameraManager {
       autoFocusManager.stop();
       autoFocusManager = null;
     }
-    if (camera != null && previewing) {
-      camera.stopPreview();
-      //previewCallback.setHandler(null, 0);
+    if (openCamera != null && previewing) {
+      openCamera.getCamera().stopPreview();
       previewing = false;
     }
   }
-
-  // All references to Torch are removed from original ZXING authors work since we're not using them.
-
-  // All references to FramingRects are removed from original ZXING authors work since we're not using them.
 
   /**
    * A factory method to build the appropriate LuminanceSource object based on the format
@@ -179,8 +211,6 @@ public final class CameraManager {
    * @return A PlanarYUVLuminanceSource instance.
    */
   public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-
-    return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height,
-        false); // Search QR in all image along, not only in Framing Rect as original code done
+    return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
   }
 }
