@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 ZXing authors
+ * Copyright (C) 2015 ZXing authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.google.zxing.client.android.camera.open;
 
-package com.google.zxing.client.android.common.executor;
+public enum CameraFacing {
 
-import com.google.zxing.client.android.common.PlatformSupportManager;
+  BACK,  // must be value 0!
+  FRONT, // must be value 1!
 
-public final class AsyncTaskExecManager extends PlatformSupportManager<AsyncTaskExecInterface> {
-
-  public AsyncTaskExecManager() {
-    super(AsyncTaskExecInterface.class, new DefaultAsyncTaskExecInterface());
-    addImplementationClass(11,
-        "com.google.zxing.client.android.common.executor.HoneycombAsyncTaskExecInterface");
-  }
 }
