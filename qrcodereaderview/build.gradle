@@ -11,8 +11,8 @@ version = "1.0.0"
 group = "com.dlazaro66.qrcodereaderview"
 
 android {
-  compileSdkVersion 21
-  buildToolsVersion "21.1.2"
+  compileSdkVersion 24
+  buildToolsVersion "24.0.1"
 
   defaultConfig {
     minSdkVersion 14
@@ -30,6 +30,5 @@ android {
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+  compile 'com.google.zxing:core:3.2.1'
 }
-
