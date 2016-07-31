@@ -6,8 +6,8 @@ android {
 
   defaultConfig {
     applicationId "com.example.qr_readerexample"
-    minSdkVersion 8
-    targetSdkVersion 21
+    minSdkVersion 14
+    targetSdkVersion 24
   }
 
   buildTypes {
@@ -19,5 +19,5 @@ android {
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+  compile project (":qrcodereaderview")
 }
