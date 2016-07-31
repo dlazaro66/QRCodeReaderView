@@ -30,6 +30,5 @@ android {
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+  compile 'com.google.zxing:core:3.2.1'
 }
-
