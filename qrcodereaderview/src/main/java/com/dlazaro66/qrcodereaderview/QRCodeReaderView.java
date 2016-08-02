@@ -97,6 +97,10 @@ public class QRCodeReaderView extends SurfaceView
     mCameraManager.stopPreview();
   }
 
+  public void setAutofocusInterval(long autofocusIntervalInMs) {
+    mCameraManager.setAutofocusInterval(autofocusIntervalInMs);
+  }
+
   @Override public void onDetachedFromWindow() {
     super.onDetachedFromWindow();
 

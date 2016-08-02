@@ -71,6 +71,10 @@ public final class CameraManager {
     }
   }
 
+  public void setAutofocusInterval(long autofocusIntervalInMs) {
+    autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
+  }
+
   public Point getPreviewSize() {
     return configManager.getCameraResolution();
   }
@@ -150,7 +154,7 @@ public final class CameraManager {
         }
         configManager.setTorch(theCamera.getCamera(), newSetting);
         if (wasAutoFocusManager) {
-          autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
+          autoFocusManager = new AutoFocusManager(theCamera.getCamera());
           autoFocusManager.start();
         }
       }
@@ -183,7 +187,7 @@ public final class CameraManager {
     if (theCamera != null && !previewing) {
       theCamera.getCamera().startPreview();
       previewing = true;
-      autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
+      autoFocusManager = new AutoFocusManager(theCamera.getCamera());
     }
   }
 
