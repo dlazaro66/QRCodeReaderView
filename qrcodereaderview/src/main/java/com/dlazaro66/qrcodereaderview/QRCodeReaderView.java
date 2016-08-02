@@ -101,6 +101,10 @@ public class QRCodeReaderView extends SurfaceView
     mCameraManager.setAutofocusInterval(autofocusIntervalInMs);
   }
 
+  public void enableTorch(boolean isEnabled) {
+    mCameraManager.enabledTorch(isEnabled);
+  }
+
   @Override public void onDetachedFromWindow() {
     super.onDetachedFromWindow();
 

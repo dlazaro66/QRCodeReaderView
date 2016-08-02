@@ -141,18 +141,18 @@ public final class CameraManager {
   }
 
   /**
-   * @param newSetting if {@code true}, light should be turned on if currently off. And vice versa.
+   * @param isEnabled if {@code true}, light should be turned on if currently off. And vice versa.
    */
-  public synchronized void setTorch(boolean newSetting) {
+  public synchronized void enabledTorch(boolean isEnabled) {
     OpenCamera theCamera = openCamera;
     if (theCamera != null) {
-      if (newSetting != configManager.getTorchState(theCamera.getCamera())) {
+      if (isEnabled != configManager.getTorchState(theCamera.getCamera())) {
         boolean wasAutoFocusManager = autoFocusManager != null;
         if (wasAutoFocusManager) {
           autoFocusManager.stop();
           autoFocusManager = null;
         }
-        configManager.setTorch(theCamera.getCamera(), newSetting);
+        configManager.enableTorch(theCamera.getCamera(), isEnabled);
         if (wasAutoFocusManager) {
           autoFocusManager = new AutoFocusManager(theCamera.getCamera());
           autoFocusManager.start();
