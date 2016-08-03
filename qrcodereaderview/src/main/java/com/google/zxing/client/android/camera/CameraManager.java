@@ -49,6 +49,7 @@ public final class CameraManager {
   // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
   // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
   private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
+  private long autofocusIntervalInMs = AutoFocusManager.DEFAULT_AUTO_FOCUS_INTERVAL_MS;
 
   public CameraManager(Context context) {
     this.context = context;
@@ -72,7 +73,7 @@ public final class CameraManager {
   }
 
   public void setAutofocusInterval(long autofocusIntervalInMs) {
-    autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
+    this.autofocusIntervalInMs = autofocusIntervalInMs;
   }
 
   public Point getPreviewSize() {
@@ -188,6 +189,7 @@ public final class CameraManager {
       theCamera.getCamera().startPreview();
       previewing = true;
       autoFocusManager = new AutoFocusManager(theCamera.getCamera());
+      autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
     }
   }
 
