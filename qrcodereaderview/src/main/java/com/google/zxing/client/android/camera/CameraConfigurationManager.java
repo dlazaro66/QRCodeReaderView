@@ -108,8 +108,7 @@ final class CameraConfigurationManager {
     }
     Log.i(TAG, "Clockwise rotation from display to camera: " + cwNeededRotation);
 
-    Point viewDimensions = new Point(width, height);
-    resolution = viewDimensions;
+    resolution = new Point(width, height);
     Log.i(TAG, "Screen resolution in current orientation: " + resolution);
     cameraResolution = findBestPreviewSizeValue(parameters, resolution);
     Log.i(TAG, "Camera resolution: " + cameraResolution);
