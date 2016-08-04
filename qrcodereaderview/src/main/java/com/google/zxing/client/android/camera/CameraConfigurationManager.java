@@ -287,24 +287,24 @@ final class CameraConfigurationManager {
     return false;
   }
 
-  void enableTorch(Camera camera, boolean isEnabled) {
+  void setTorchEnabled(Camera camera, boolean enabled) {
     Camera.Parameters parameters = camera.getParameters();
-    enableTorch(parameters, isEnabled, false);
+    setTorchEnabled(parameters, enabled, false);
     camera.setParameters(parameters);
   }
 
-  private void enableTorch(Camera.Parameters parameters, boolean isEnabled, boolean safeMode) {
-    enableTorch(parameters, isEnabled);
+  void setTorchEnabled(Camera.Parameters parameters, boolean enabled, boolean safeMode) {
+    setTorchEnabled(parameters, enabled);
 
     if (!safeMode) {
-      setBestExposure(parameters, isEnabled);
+      setBestExposure(parameters, enabled);
     }
   }
 
-  public static void enableTorch(Camera.Parameters parameters, boolean on) {
+  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled) {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
-    if (on) {
+    if (enabled) {
       flashMode =
           findSettableValue("flash mode", supportedFlashModes, Camera.Parameters.FLASH_MODE_TORCH,
               Camera.Parameters.FLASH_MODE_ON);
