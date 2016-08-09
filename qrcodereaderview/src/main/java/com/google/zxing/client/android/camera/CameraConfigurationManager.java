@@ -108,8 +108,7 @@ final class CameraConfigurationManager {
     }
     Log.i(TAG, "Clockwise rotation from display to camera: " + cwNeededRotation);
 
-    Point viewDimensions = new Point(width,height);
-    resolution = viewDimensions;
+    resolution = new Point(width, height);
     Log.i(TAG, "Screen resolution in current orientation: " + resolution);
     cameraResolution = findBestPreviewSizeValue(parameters, resolution);
     Log.i(TAG, "Camera resolution: " + cameraResolution);
@@ -288,24 +287,24 @@ final class CameraConfigurationManager {
     return false;
   }
 
-  void setTorch(Camera camera, boolean newSetting) {
+  void setTorchEnabled(Camera camera, boolean enabled) {
     Camera.Parameters parameters = camera.getParameters();
-    doSetTorch(parameters, newSetting, false);
+    setTorchEnabled(parameters, enabled, false);
     camera.setParameters(parameters);
   }
 
-  private void doSetTorch(Camera.Parameters parameters, boolean newSetting, boolean safeMode) {
-    setTorch(parameters, newSetting);
+  void setTorchEnabled(Camera.Parameters parameters, boolean enabled, boolean safeMode) {
+    setTorchEnabled(parameters, enabled);
 
     if (!safeMode) {
-      setBestExposure(parameters, newSetting);
+      setBestExposure(parameters, enabled);
     }
   }
 
-  public static void setTorch(Camera.Parameters parameters, boolean on) {
+  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled) {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
-    if (on) {
+    if (enabled) {
       flashMode =
           findSettableValue("flash mode", supportedFlashModes, Camera.Parameters.FLASH_MODE_TORCH,
               Camera.Parameters.FLASH_MODE_ON);

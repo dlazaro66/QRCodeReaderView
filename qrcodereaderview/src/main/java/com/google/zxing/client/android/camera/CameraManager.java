@@ -49,6 +49,7 @@ public final class CameraManager {
   // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
   // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
   private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
+  private long autofocusIntervalInMs = AutoFocusManager.DEFAULT_AUTO_FOCUS_INTERVAL_MS;
 
   public CameraManager(Context context) {
     this.context = context;
@@ -68,6 +69,13 @@ public final class CameraManager {
 
     if (isOpen()) {
       openCamera.getCamera().setDisplayOrientation(degrees);
+    }
+  }
+
+  public void setAutofocusInterval(long autofocusIntervalInMs) {
+    if (autoFocusManager != null) {
+      this.autofocusIntervalInMs = autofocusIntervalInMs;
+      autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
     }
   }
 
@@ -137,20 +145,20 @@ public final class CameraManager {
   }
 
   /**
-   * @param newSetting if {@code true}, light should be turned on if currently off. And vice versa.
+   * @param enabled if {@code true}, light should be turned on if currently off. And vice versa.
    */
-  public synchronized void setTorch(boolean newSetting) {
+  public synchronized void setTorchEnabled(boolean enabled) {
     OpenCamera theCamera = openCamera;
     if (theCamera != null) {
-      if (newSetting != configManager.getTorchState(theCamera.getCamera())) {
+      if (enabled != configManager.getTorchState(theCamera.getCamera())) {
         boolean wasAutoFocusManager = autoFocusManager != null;
         if (wasAutoFocusManager) {
           autoFocusManager.stop();
           autoFocusManager = null;
         }
-        configManager.setTorch(theCamera.getCamera(), newSetting);
+        configManager.setTorchEnabled(theCamera.getCamera(), enabled);
         if (wasAutoFocusManager) {
-          autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
+          autoFocusManager = new AutoFocusManager(theCamera.getCamera());
           autoFocusManager.start();
         }
       }
@@ -183,7 +191,8 @@ public final class CameraManager {
     if (theCamera != null && !previewing) {
       theCamera.getCamera().startPreview();
       previewing = true;
-      autoFocusManager = new AutoFocusManager(context, theCamera.getCamera());
+      autoFocusManager = new AutoFocusManager(theCamera.getCamera());
+      autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
     }
   }
 

@@ -23,6 +23,7 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
     mydecoderview.setOnQRCodeReadListener(this);
+    mydecoderview.setAutofocusInterval(1000L);
 
     myTextView = (TextView) findViewById(R.id.exampleTextView);
 
@@ -36,7 +37,6 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
     mAnimation.setRepeatMode(Animation.REVERSE);
     mAnimation.setInterpolator(new LinearInterpolator());
     line_image.setAnimation(mAnimation);
-
   }
 
   @Override protected void onResume() {
