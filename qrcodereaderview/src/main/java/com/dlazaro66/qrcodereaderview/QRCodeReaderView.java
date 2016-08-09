@@ -98,11 +98,15 @@ public class QRCodeReaderView extends SurfaceView
   }
 
   public void setAutofocusInterval(long autofocusIntervalInMs) {
-    mCameraManager.setAutofocusInterval(autofocusIntervalInMs);
+    if (mCameraManager != null) {
+      mCameraManager.setAutofocusInterval(autofocusIntervalInMs);
+    }
   }
 
   public void setTorchEnabled(boolean enabled) {
-    mCameraManager.setTorchEnabled(enabled);
+    if (mCameraManager != null) {
+      mCameraManager.setTorchEnabled(enabled);
+    }
   }
 
   @Override public void onDetachedFromWindow() {

@@ -76,7 +76,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
     if (autofocusIntervalMs <= 0) {
       throw new IllegalArgumentException("AutoFocusInterval must be greater than 0.");
     }
-      this.autofocusIntervalMs = autofocusIntervalMs;
+    this.autofocusIntervalMs = autofocusIntervalMs;
   }
 
   private synchronized void autoFocusAgainLater() {
