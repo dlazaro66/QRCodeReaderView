@@ -37,9 +37,10 @@ android {
 
 
 bintray {
-  user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
-  key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_APIKEY')
+  user = project.property('bintrayUser')
+  key = project.property('bintrayApikey')
   configurations = ['archives']
+  publish = true
   pkg {
     repo = "maven"
     name = "QRCodeReaderView"
