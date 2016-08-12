@@ -121,13 +121,13 @@ Screenshots
 Developed By
 ------------
 
-* David Lázaro Esparcia - <dlazaro66@gmail.com>
+* David Lázaro Esparcia  
 
 <a href="https://twitter.com/_dlazaro">
-  <img alt="Follow me on Twitter" src="http://imageshack.us/a/img812/3923/smallth.png" />
+  <img alt="Follow me on Twitter" src="../master/readme_images/logo-twitter.png?raw=true" />
 </a>
 <a href="https://es.linkedin.com/pub/david-lázaro-esparcia/49/4b3/342">
-  <img alt="Add me to Linkedin" src="http://imageshack.us/a/img41/7877/smallld.png" />
+  <img alt="Add me to Linkedin" src="../master/readme_images/logo-linkedin.png?raw=true" />
 </a>
 
 
@@ -136,13 +136,14 @@ Who's using it
 
 *Does your app use QRCodeReaderView? If you want to be featured on this list drop me a line.*
 
-* [Swapcard][5]
+* [Swapcard][6]
 
 Contributors
 ------------
 * [David Lázaro Esparcia][2]
-* [Daniel Comas Fernández][3]
-* [Kirill Boyarshinov][4]
+* [Samuel Guirado Navarro][3]
+* [Daniel Comas Fernández][4]
+* [Kirill Boyarshinov][5]
 
 License
 -------
@@ -164,9 +165,10 @@ License
 
 [1]: https://github.com/zxing/zxing/
 [2]: https://github.com/dlazaro66
-[3]: https://github.com/danicomas
-[4]: https://github.com/kboyarshinov
-[5]: https://www.swapcard.com/
+[3]: https://github.com/saguinav
+[4]: https://github.com/danicomas
+[5]: https://github.com/kboyarshinov
+[6]: https://www.swapcard.com/
 
 
 

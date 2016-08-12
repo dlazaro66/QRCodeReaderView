@@ -19,5 +19,7 @@ android {
 }
 
 dependencies {
-  compile project (":qrcodereaderview")
+  compile project(':qrcodereaderview')
+  compile 'com.android.support:support-v4:24.0.0'
+  compile 'com.android.support:design:24.0.0'
 }
