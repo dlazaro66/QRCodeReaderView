@@ -26,6 +26,7 @@ public class DecoderActivity extends AppCompatActivity
   private TextView resultTextView;
   private QRCodeReaderView qrCodeReaderView;
   private CheckBox flashlightCheckBox;
+  private PointsOverlayView pointsOverlayView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -78,6 +79,7 @@ public class DecoderActivity extends AppCompatActivity
   // "points" : points where QR control points are placed
   @Override public void onQRCodeRead(String text, PointF[] points) {
     resultTextView.setText(text);
+    pointsOverlayView.setPoints(points);
   }
 
   private void requestCameraPermission() {
@@ -103,6 +105,7 @@ public class DecoderActivity extends AppCompatActivity
     qrCodeReaderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
     resultTextView = (TextView) content.findViewById(R.id.result_text_view);
     flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
+    pointsOverlayView = (PointsOverlayView) content.findViewById(R.id.points_overlay_view);
 
     qrCodeReaderView.setAutofocusInterval(2000L);
     qrCodeReaderView.setOnQRCodeReadListener(this);

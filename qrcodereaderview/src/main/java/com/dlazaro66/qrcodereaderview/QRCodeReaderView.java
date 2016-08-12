@@ -298,14 +298,40 @@ public class QRCodeReaderView extends SurfaceView
     /**
      * Transform result to surfaceView coordinates
      *
-     * This method is needed because coordinates are given in landscape camera coordinates.
-     * Now is working but transform operations aren't very explained
-     *
-     * TODO re-write this method explaining each single value
+     * This method is needed because coordinates are given in landscape camera coordinates when
+     * device is in portrait mode and different coordinates otherwise.
      *
      * @return a new PointF array with transformed points
      */
-    private static PointF[] transformToViewCoordinates(QRCodeReaderView view,
+    private PointF[] transformToViewCoordinates(QRCodeReaderView view, ResultPoint[] resultPoints) {
+      int orientation = view.getCameraDisplayOrientation();
+      if (orientation == 90 || orientation == 270) {
+        return transformToPortraitViewCoordinates(view, resultPoints);
+      } else {
+        return transformToLandscapeViewCoordinates(view, resultPoints);
+      }
+    }
+
+    private PointF[] transformToLandscapeViewCoordinates(QRCodeReaderView view,
+        ResultPoint[] resultPoints) {
+      PointF[] transformedPoints = new PointF[resultPoints.length];
+      int index = 0;
+      float origX = view.mCameraManager.getPreviewSize().x;
+      float origY = view.mCameraManager.getPreviewSize().y;
+      float scaleX = view.getWidth() / origX;
+      float scaleY = view.getHeight() / origY;
+
+      for (ResultPoint point : resultPoints) {
+        PointF transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX,
+            view.getHeight() - point.getY() * scaleY);
+        transformedPoints[index] = transformedPoint;
+        index++;
+      }
+
+      return transformedPoints;
+    }
+
+    private PointF[] transformToPortraitViewCoordinates(QRCodeReaderView view,
         ResultPoint[] resultPoints) {
       PointF[] transformedPoints = new PointF[resultPoints.length];
 
@@ -320,7 +346,6 @@ public class QRCodeReaderView extends SurfaceView
         transformedPoints[index] = tmpPoint;
         index++;
       }
-
       return transformedPoints;
     }
   }
