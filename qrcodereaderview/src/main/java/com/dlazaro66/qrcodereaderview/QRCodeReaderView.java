@@ -40,7 +40,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 /**
- * QRCodeReaderView - Class which uses ZXING lib and let you easily integrate a QR decoder view.
+ *
+ * QRCodeReaderView Class which uses ZXING lib and let you easily integrate a QR decoder view.
  * Take some classes and made some modifications in the original ZXING - Barcode Scanner project.
  *
  * @author David Lázaro
@@ -81,28 +82,53 @@ public class QRCodeReaderView extends SurfaceView
     }
   }
 
+  /**
+   * Set the callback to return decoding result
+   * @param onQRCodeReadListener the listener
+   */
   public void setOnQRCodeReadListener(OnQRCodeReadListener onQRCodeReadListener) {
     mOnQRCodeReadListener = onQRCodeReadListener;
   }
 
+  /**
+   * Set QR decoding enabled/disabled.
+   * default value is true
+   * @param qrDecodingEnabled decoding enabled/disabled.
+   */
   public void setQRDecodingEnabled(boolean qrDecodingEnabled) {
     this.mQrDecodingEnabled = qrDecodingEnabled;
   }
 
+  /**
+   * Starts camera preview and decoding
+   */
   public void startCamera() {
     mCameraManager.startPreview();
   }
 
+  /**
+   * Stop camera preview and decoding
+   */
   public void stopCamera() {
     mCameraManager.stopPreview();
   }
 
+  /**
+   * Set Camera autofocus interval value
+   * default value is 5000 ms.
+   * @param autofocusIntervalInMs autofocus interval value
+   */
   public void setAutofocusInterval(long autofocusIntervalInMs) {
     if (mCameraManager != null) {
       mCameraManager.setAutofocusInterval(autofocusIntervalInMs);
     }
   }
 
+  /**
+   * Set Torch enabled/disabled.
+   * default value is false
+   * @param enabled torch enabled/disabled.
+   */
   public void setTorchEnabled(boolean enabled) {
     if (mCameraManager != null) {
       mCameraManager.setTorchEnabled(enabled);

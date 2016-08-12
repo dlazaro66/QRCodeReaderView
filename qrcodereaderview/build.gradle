@@ -4,27 +4,52 @@ buildscript {
     mavenCentral()
   }
 }
+plugins {
+  id "com.jfrog.bintray" version "1.7"
+}
 
 apply plugin: 'com.android.library'
 
-version = "1.0.0"
 group = "com.dlazaro66.qrcodereaderview"
+
+def libVersionCode = "2.0.0"
+def siteUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib'
+def gitUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib.git'
 
 android {
   compileSdkVersion 24
   buildToolsVersion "24.0.1"
 
   defaultConfig {
-    minSdkVersion 14
+    minSdkVersion 10
     targetSdkVersion 24
     versionCode 1
-    versionName version
+    versionName libVersionCode
   }
 
   buildTypes {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+    }
+  }
+}
+
+
+bintray {
+  user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
+  key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_APIKEY')
+  configurations = ['archives']
+  pkg {
+    repo = "maven"
+    name = "QRCodeReaderView"
+    websiteUrl = siteUrl
+    vcsUrl = gitUrl
+    licenses = ["Apache-2.0"]
+    version {
+      name = libVersionCode
+      desc = 'QRCodeReaderView ' + libVersionCode
+      released = new Date()
     }
   }
 }
