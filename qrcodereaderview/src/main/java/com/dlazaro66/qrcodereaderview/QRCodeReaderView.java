@@ -161,6 +161,7 @@ public class QRCodeReaderView extends SurfaceView
     mCameraManager.stopPreview();
 
     // Fix the camera sensor rotation
+    mCameraManager.setPreviewCallback(this);
     mCameraManager.setDisplayOrientation(getCameraDisplayOrientation());
 
     mCameraManager.startPreview();
