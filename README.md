@@ -12,11 +12,10 @@ You can also use this for Augmented Reality purposes, as you get QR control poin
 Usage
 -----
 
-How to use:
-
-- Create an Activity which implements onQRCodeReadListener, and let implements required methods
-- Make sure Activity orientation is PORTRAIT and give Camera permision in the manifest.xml
-- Add a "QRCodeReaderView" in the layout editor like you actually do with a button for example
+- Add a "QRCodeReaderView" in the layout editor like you actually do with a button for example.
+- In your onCreate method, you can find the view as usual, using findViewById() function.
+- Create an Activity which implements `onQRCodeReadListener`, and let implements required methods or set a `onQRCodeReadListener` to the QRCodeReaderView object
+- Make sure you have camera permissions in order to use the library. (https://developer.android.com/training/permissions/requesting.html)
 
 ```xml
 
@@ -27,18 +26,14 @@ How to use:
 
 ```
 
-
-- In your onCreate method, you can find the view as usual, using findViewById() function.
-- Set onQRCodeReadListener to the QRCodeReaderView.
 - Start & Stop camera preview in onPause() and onResume() overriden methods.
-- Use onQRCodeReadListener callbacks as you want.
-- You can place widgets or views over QRDecoderView
+- You can place widgets or views over QRDecoderView.
  
 ```java
 	public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
-    private TextView myTextView;
-	private QRCodeReaderView mydecoderview;
+    private TextView resultTextView;
+	private QRCodeReaderView qrCodeReaderView;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,42 +42,35 @@ How to use:
         
         mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
-        
-        myTextView = (TextView) findViewById(R.id.exampleTextView);
+
+    	// Use this function to enable/disable decoding
+        mydecoderview.setQRDecodingEnabled(true);
+
+        // Use this function to change the autofocus interval (default is 5 secs)
+        mydecoderview.setAutofocusInterval(2000L);
+
+        // Use this function to enable/disable Torch
+        mydecoderview.setTorchEnabled(true);
     }
 
-    
     // Called when a QR is decoded
     // "text" : the text encoded in QR
-    // "points" : points where QR control points are placed
+    // "points" : points where QR control points are placed in View
 	@Override
 	public void onQRCodeRead(String text, PointF[] points) {
-		myTextView.setText(text);
-	}
-
-	
-	// Called when your device have no camera
-	@Override
-	public void cameraNotFound() {
-		
-	}
-
-	// Called when there's no QR codes in the camera preview image
-	@Override
-	public void QRCodeNotFoundOnCamImage() {
-		
+		resultTextView.setText(text);
 	}
     
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mydecoderview.getCameraManager().startPreview();
+		qrCodeReaderView.startCamera();
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mydecoderview.getCameraManager().stopPreview();
+		qrCodeReaderView.stopCamera();
 	}
 }
 ```
@@ -115,7 +103,7 @@ Libraries used in this project
 Screenshots
 -----------
 
-![Image](../master/readme_images/app_example.png?raw=true)
+![Image](../master/readme_images/app_example.gif?raw=true)
 
 
 Developed By
