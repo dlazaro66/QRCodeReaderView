@@ -5,28 +5,27 @@ import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener;
 
-public class DecoderActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, OnQRCodeReadListener {
+public class DecoderActivity extends AppCompatActivity
+    implements ActivityCompat.OnRequestPermissionsResultCallback, OnQRCodeReadListener {
 
   private static final int MY_PERMISSION_REQUEST_CAMERA = 0;
 
   private ViewGroup mainLayout;
 
-  @Nullable private TextView myTextView;
-  @Nullable private QRCodeReaderView myDecoderView;
+  private TextView resultTextView;
+  private QRCodeReaderView qrCodeReaderView;
+  private CheckBox flashlightCheckBox;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -46,16 +45,16 @@ public class DecoderActivity extends AppCompatActivity implements ActivityCompat
   @Override protected void onResume() {
     super.onResume();
 
-    if (myDecoderView != null) {
-      myDecoderView.startCamera();
+    if (qrCodeReaderView != null) {
+      qrCodeReaderView.startCamera();
     }
   }
 
   @Override protected void onPause() {
     super.onPause();
 
-    if (myDecoderView != null) {
-      myDecoderView.stopCamera();
+    if (qrCodeReaderView != null) {
+      qrCodeReaderView.stopCamera();
     }
   }
 
@@ -78,7 +77,7 @@ public class DecoderActivity extends AppCompatActivity implements ActivityCompat
   // "text" : the text encoded in QR
   // "points" : points where QR control points are placed
   @Override public void onQRCodeRead(String text, PointF[] points) {
-    myTextView.setText(text);
+    resultTextView.setText(text);
   }
 
   private void requestCameraPermission() {
@@ -101,22 +100,17 @@ public class DecoderActivity extends AppCompatActivity implements ActivityCompat
   private void initQRCodeReaderView() {
     View content = getLayoutInflater().inflate(R.layout.content_decoder, mainLayout, true);
 
-    myDecoderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
-    myDecoderView.setOnQRCodeReadListener(this);
-    myDecoderView.setAutofocusInterval(1000L);
-    myDecoderView.startCamera();
+    qrCodeReaderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
+    resultTextView = (TextView) content.findViewById(R.id.result_text_view);
+    flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
 
-    myTextView = (TextView) content.findViewById(R.id.exampleTextView);
-
-    ImageView lineImage = (ImageView) content.findViewById(R.id.red_line_image);
-
-    TranslateAnimation mAnimation =
-        new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0f, TranslateAnimation.ABSOLUTE, 0f,
-            TranslateAnimation.RELATIVE_TO_PARENT, 0f, TranslateAnimation.RELATIVE_TO_PARENT, 0.5f);
-    mAnimation.setDuration(1000);
-    mAnimation.setRepeatCount(-1);
-    mAnimation.setRepeatMode(Animation.REVERSE);
-    mAnimation.setInterpolator(new LinearInterpolator());
-    lineImage.setAnimation(mAnimation);
+    qrCodeReaderView.setAutofocusInterval(2000L);
+    qrCodeReaderView.setOnQRCodeReadListener(this);
+    flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        qrCodeReaderView.setTorchEnabled(isChecked);
+      }
+    });
+    qrCodeReaderView.startCamera();
   }
 }
