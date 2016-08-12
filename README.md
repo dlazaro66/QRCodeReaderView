@@ -103,7 +103,7 @@ Libraries used in this project
 Screenshots
 -----------
 
-![Image](../master/readme_images/app_example.gif?raw=true)
+![Image](../master/readme_images/app-example.gif?raw=true)
 
 
 Developed By
