@@ -269,11 +269,11 @@ public class QRCodeReaderView extends SurfaceView
       try {
         return view.mQRCodeReader.decode(bitmap);
       } catch (ChecksumException e) {
-        Log.e(TAG, "ChecksumException", e);
+        Log.d(TAG, "ChecksumException", e);
       } catch (NotFoundException e) {
         Log.d(TAG, "No QR Code found");
       } catch (FormatException e) {
-        Log.e(TAG, "FormatException", e);
+        Log.d(TAG, "FormatException", e);
       } finally {
         view.mQRCodeReader.reset();
       }

@@ -38,13 +38,26 @@
       android:background="#99000000"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="flashlight"
+      android:text="On/Off flashlight"
       android:layout_alignParentBottom="true"
       android:textSize="14sp"
       android:padding="16dp"
       android:textColor="#ffffff"
       android:id="@+id/flashlight_checkbox"
       android:checked="false"
+      />
+
+  <CheckBox
+      android:background="#99000000"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="On/Off QR decoding"
+      android:layout_above="@+id/flashlight_checkbox"
+      android:textSize="14sp"
+      android:padding="16dp"
+      android:textColor="#ffffff"
+      android:id="@+id/enable_decoding_checkbox"
+      android:checked="true"
       />
 
 </RelativeLayout>

@@ -26,6 +26,7 @@ public class DecoderActivity extends AppCompatActivity
   private TextView resultTextView;
   private QRCodeReaderView qrCodeReaderView;
   private CheckBox flashlightCheckBox;
+  private CheckBox enableDecodingCheckBox;
   private PointsOverlayView pointsOverlayView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,7 @@ public class DecoderActivity extends AppCompatActivity
     qrCodeReaderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
     resultTextView = (TextView) content.findViewById(R.id.result_text_view);
     flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
+    enableDecodingCheckBox = (CheckBox) content.findViewById(R.id.enable_decoding_checkbox);
     pointsOverlayView = (PointsOverlayView) content.findViewById(R.id.points_overlay_view);
 
     qrCodeReaderView.setAutofocusInterval(2000L);
@@ -112,6 +114,11 @@ public class DecoderActivity extends AppCompatActivity
     flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         qrCodeReaderView.setTorchEnabled(isChecked);
+      }
+    });
+    enableDecodingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        qrCodeReaderView.setQRDecodingEnabled(isChecked);
       }
     });
     qrCodeReaderView.startCamera();
