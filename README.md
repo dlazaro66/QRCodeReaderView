@@ -85,7 +85,7 @@ Add QRCodeReaderView dependency to your build.gradle
 ```groovy
 
 dependencies{
-    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+      compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0@aar'
 }
 
 ```

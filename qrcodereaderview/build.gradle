@@ -3,20 +3,26 @@ buildscript {
     jcenter()
     mavenCentral()
   }
+  dependencies {
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+  }
 }
 plugins {
   id "com.jfrog.bintray" version "1.7"
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
-group = "com.dlazaro66.qrcodereaderview"
-
-def libVersionCode = "2.0.0"
+def libVersionCode = '2.0.0'
 def siteUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib'
 def gitUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib.git'
 
+group = "com.dlazaro66.qrcodereaderview"
+version = libVersionCode
+
 android {
+
   compileSdkVersion 24
   buildToolsVersion "24.0.1"
 
@@ -35,26 +41,86 @@ android {
   }
 }
 
+dependencies {
+  compile 'com.google.zxing:core:3.2.1'
+}
+
+install {
+  repositories.mavenInstaller {
+    pom {
+      project {
+        packaging 'aar'
+        name 'Android view which show camera and notify when there\'s a QR code inside the preview.'
+        url siteUrl
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            id 'dlazaro66'
+            name 'David Lázaro'
+            email 'dlazaro66@gmail.com'
+          }
+        }
+        scm {
+          connection gitUrl
+          developerConnection gitUrl
+          url siteUrl
+        }
+      }
+    }
+  }
+}
+
 
 bintray {
   user = project.property('bintrayUser')
-  key = project.property('bintrayApikey')
+  key = project.property('bintrayApiKey')
   configurations = ['archives']
   publish = true
   pkg {
+    version {
+      name = libVersionCode
+      desc = 'Android view which show camera and notify when there\'s a QR code inside the preview.'
+      released = new Date()
+      vcsTag = libVersionCode
+    }
     repo = "maven"
     name = "QRCodeReaderView"
     websiteUrl = siteUrl
     vcsUrl = gitUrl
     licenses = ["Apache-2.0"]
-    version {
-      name = libVersionCode
-      desc = 'QRCodeReaderView ' + libVersionCode
-      released = new Date()
-    }
   }
 }
 
-dependencies {
-  compile 'com.google.zxing:core:3.2.1'
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.4'
 }
+
+task sourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+artifacts {
+  archives javadocJar
+  archives sourcesJar
+}
+
+task findConventions << {
+  println project.getConvention()
+}
+
+
