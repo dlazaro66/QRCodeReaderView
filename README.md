@@ -90,6 +90,8 @@ dependencies{
 
 ```
 
+Note: due a gradle issue, if you are using gradle 2.4 you don't need to add the -@aar suffix at the end of the dependency declaration, simply add `compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0' `  
+
 Do you want to contribute?
 --------------------------
 
