@@ -87,13 +87,22 @@ Add QRCodeReaderView dependency to your build.gradle
 ```groovy
 
 dependencies{
-      compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0@aar'
-      compile 'com.google.zxing:core:3.2.0'
+      compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0'
 }
-
 ```
 
-Note: There is an issue I'm trying to solve, so at the moment you need to declare the `'com.google.zxing:core:3.2.0'` dependency too as a workaround. 
+Note: There is an issue with gradle 2.10, if you declare your dependency and it can't be found in jCenter repository (`could not find qrcodereaderview.jar Searched in the following locations:` or similar), try to declare the library dependency like this:
+
+```groovy
+
+dependencies{
+      compile ('com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0@aar'){
+        transitive = true
+      }
+}
+```
+And in some cases, you need to clean your Gradle cache
+`./gradlew build --refresh-dependencies`
 
 Do you want to contribute?
 --------------------------
