@@ -82,15 +82,18 @@ Add it to your project
 
 Add QRCodeReaderView dependency to your build.gradle
 
+
+
 ```groovy
 
 dependencies{
       compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0@aar'
+      compile 'com.google.zxing:core:3.2.0'
 }
 
 ```
 
-Note: due a gradle issue, if you are using gradle 2.4 you don't need to add the -@aar suffix at the end of the dependency declaration, simply add `compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0' `  
+Note: There is an issue I'm trying to solve, so at the moment you need to declare the `'com.google.zxing:core:3.2.0'` dependency too as a workaround. 
 
 Do you want to contribute?
 --------------------------
