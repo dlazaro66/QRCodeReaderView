@@ -140,8 +140,12 @@ public final class CameraManager {
    *
    * @param cameraId camera ID of the camera to use. A negative value means "no preference".
    */
-  public synchronized void setManualCameraId(int cameraId) {
+  public synchronized void setPreviewCameraId(int cameraId) {
     requestedCameraId = cameraId;
+  }
+
+  public int getPreviewCameraId() {
+    return requestedCameraId;
   }
 
   /**
