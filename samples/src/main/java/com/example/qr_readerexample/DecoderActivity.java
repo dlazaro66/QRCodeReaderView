@@ -111,7 +111,7 @@ public class DecoderActivity extends AppCompatActivity
 
     qrCodeReaderView.setAutofocusInterval(2000L);
     qrCodeReaderView.setOnQRCodeReadListener(this);
-    qrCodeReaderView.setPreviewCameraId(QRCodeReaderView.CAMERA_FACING_BACK);
+    qrCodeReaderView.setBackCamera();
     flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         qrCodeReaderView.setTorchEnabled(isChecked);

@@ -53,8 +53,8 @@ public class QRCodeReaderView extends SurfaceView
     void onQRCodeRead(String text, PointF[] points);
   }
 
-  public static int CAMERA_FACING_BACK = Camera.CameraInfo.CAMERA_FACING_BACK;
-  public static int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
+  private static int CAMERA_FACING_BACK = Camera.CameraInfo.CAMERA_FACING_BACK;
+  private static int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
   private OnQRCodeReadListener mOnQRCodeReadListener;
 
@@ -149,6 +149,20 @@ public class QRCodeReaderView extends SurfaceView
    */
   public void setPreviewCameraId(int cameraId) {
     mCameraManager.setPreviewCameraId(cameraId);
+  }
+
+  /**
+   * Camera preview from device back camera
+   */
+  public void setBackCamera() {
+    setPreviewCameraId(CAMERA_FACING_BACK);
+  }
+
+  /**
+   * Camera preview from device front camera
+   */
+  public void setFrontCamera() {
+    setPreviewCameraId(CAMERA_FACING_FRONT);
   }
 
   @Override public void onDetachedFromWindow() {
