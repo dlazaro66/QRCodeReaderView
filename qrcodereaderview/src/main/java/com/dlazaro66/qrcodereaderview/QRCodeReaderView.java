@@ -53,9 +53,6 @@ public class QRCodeReaderView extends SurfaceView
     void onQRCodeRead(String text, PointF[] points);
   }
 
-  private static int CAMERA_FACING_BACK = Camera.CameraInfo.CAMERA_FACING_BACK;
-  private static int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
-
   private OnQRCodeReadListener mOnQRCodeReadListener;
 
   private static final String TAG = QRCodeReaderView.class.getName();
@@ -155,14 +152,14 @@ public class QRCodeReaderView extends SurfaceView
    * Camera preview from device back camera
    */
   public void setBackCamera() {
-    setPreviewCameraId(CAMERA_FACING_BACK);
+    setPreviewCameraId(Camera.CameraInfo.CAMERA_FACING_BACK);
   }
 
   /**
    * Camera preview from device front camera
    */
   public void setFrontCamera() {
-    setPreviewCameraId(CAMERA_FACING_FRONT);
+    setPreviewCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT);
   }
 
   @Override public void onDetachedFromWindow() {
@@ -380,7 +377,7 @@ public class QRCodeReaderView extends SurfaceView
       for (ResultPoint point : resultPoints) {
         PointF transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX,
             view.getHeight() - point.getY() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == CAMERA_FACING_FRONT) {
+        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
           transformedPoint.x = view.getWidth() - transformedPoint.x;
         }
         transformedPoints[index] = transformedPoint;
@@ -403,7 +400,7 @@ public class QRCodeReaderView extends SurfaceView
       for (ResultPoint point : resultPoints) {
         PointF transformedPoint =
             new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == CAMERA_FACING_FRONT) {
+        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
           transformedPoint.y = view.getHeight() - transformedPoint.y;
         }
         transformedPoints[index] = transformedPoint;
