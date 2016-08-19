@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 /**
- *
  * QRCodeReaderView Class which uses ZXING lib and let you easily integrate a QR decoder view.
  * Take some classes and made some modifications in the original ZXING - Barcode Scanner project.
  *
@@ -84,6 +83,7 @@ public class QRCodeReaderView extends SurfaceView
 
   /**
    * Set the callback to return decoding result
+   *
    * @param onQRCodeReadListener the listener
    */
   public void setOnQRCodeReadListener(OnQRCodeReadListener onQRCodeReadListener) {
@@ -93,6 +93,7 @@ public class QRCodeReaderView extends SurfaceView
   /**
    * Set QR decoding enabled/disabled.
    * default value is true
+   *
    * @param qrDecodingEnabled decoding enabled/disabled.
    */
   public void setQRDecodingEnabled(boolean qrDecodingEnabled) {
@@ -116,6 +117,7 @@ public class QRCodeReaderView extends SurfaceView
   /**
    * Set Camera autofocus interval value
    * default value is 5000 ms.
+   *
    * @param autofocusIntervalInMs autofocus interval value
    */
   public void setAutofocusInterval(long autofocusIntervalInMs) {
@@ -127,12 +129,37 @@ public class QRCodeReaderView extends SurfaceView
   /**
    * Set Torch enabled/disabled.
    * default value is false
+   *
    * @param enabled torch enabled/disabled.
    */
   public void setTorchEnabled(boolean enabled) {
     if (mCameraManager != null) {
       mCameraManager.setTorchEnabled(enabled);
     }
+  }
+
+  /**
+   * Allows user to specify the camera ID, rather than determine
+   * it automatically based on available cameras and their orientation.
+   *
+   * @param cameraId camera ID of the camera to use. A negative value means "no preference".
+   */
+  public void setPreviewCameraId(int cameraId) {
+    mCameraManager.setPreviewCameraId(cameraId);
+  }
+
+  /**
+   * Camera preview from device back camera
+   */
+  public void setBackCamera() {
+    setPreviewCameraId(Camera.CameraInfo.CAMERA_FACING_BACK);
+  }
+
+  /**
+   * Camera preview from device front camera
+   */
+  public void setFrontCamera() {
+    setPreviewCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT);
   }
 
   @Override public void onDetachedFromWindow() {
@@ -241,7 +268,7 @@ public class QRCodeReaderView extends SurfaceView
     }
 
     Camera.CameraInfo info = new Camera.CameraInfo();
-    android.hardware.Camera.getCameraInfo(0, info);
+    android.hardware.Camera.getCameraInfo(mCameraManager.getPreviewCameraId(), info);
     WindowManager windowManager =
         (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
     int rotation = windowManager.getDefaultDisplay().getRotation();
@@ -350,6 +377,9 @@ public class QRCodeReaderView extends SurfaceView
       for (ResultPoint point : resultPoints) {
         PointF transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX,
             view.getHeight() - point.getY() * scaleY);
+        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+          transformedPoint.x = view.getWidth() - transformedPoint.x;
+        }
         transformedPoints[index] = transformedPoint;
         index++;
       }
@@ -368,8 +398,12 @@ public class QRCodeReaderView extends SurfaceView
       float scaleY = view.getHeight() / previewX;
 
       for (ResultPoint point : resultPoints) {
-        PointF tmpPoint = new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
-        transformedPoints[index] = tmpPoint;
+        PointF transformedPoint =
+            new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
+        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+          transformedPoint.y = view.getHeight() - transformedPoint.y;
+        }
+        transformedPoints[index] = transformedPoint;
         index++;
       }
       return transformedPoints;

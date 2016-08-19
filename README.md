@@ -51,6 +51,12 @@ Usage
 
         // Use this function to enable/disable Torch
         mydecoderview.setTorchEnabled(true);
+
+        // Use this function to set front camera preview
+        mydecoderview.setFrontCamera();
+
+        // Use this function to set back camera preview
+        mydecoderview.setBackCamera();
     }
 
     // Called when a QR is decoded
