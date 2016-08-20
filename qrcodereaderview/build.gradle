@@ -87,6 +87,10 @@ bintray {
       desc = 'Android view which show camera and notify when there\'s a QR code inside the preview.'
       released = new Date()
       vcsTag = libVersionCode
+      gpg {
+        sign = true //Determines whether to GPG sign the files. The default is false
+        passphrase = project.property('gpgPassphrase') //Optional. The passphrase for GPG signing'
+      }
     }
     repo = "maven"
     name = "QRCodeReaderView"
