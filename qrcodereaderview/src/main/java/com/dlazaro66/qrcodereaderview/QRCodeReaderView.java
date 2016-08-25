@@ -77,7 +77,8 @@ public class QRCodeReaderView extends SurfaceView
 
       getHolder().addCallback(this);
     } else {
-      throw new RuntimeException("Error: Camera not found");
+      if (!isInEditMode())
+        throw new RuntimeException("Error: Camera not found");
     }
   }
 
