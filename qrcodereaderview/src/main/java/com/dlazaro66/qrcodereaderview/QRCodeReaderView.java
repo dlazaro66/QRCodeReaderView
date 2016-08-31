@@ -17,6 +17,7 @@ package com.dlazaro66.qrcodereaderview;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -26,8 +27,10 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
@@ -36,8 +39,10 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 /**
  * QRCodeReaderView Class which uses ZXING lib and let you easily integrate a QR decoder view.
@@ -45,24 +50,24 @@ import java.lang.ref.WeakReference;
  *
  * @author David Lázaro
  */
-public class QRCodeReaderView extends SurfaceView
-    implements SurfaceHolder.Callback, Camera.PreviewCallback {
+@SuppressWarnings("deprecation")
+public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
   public interface OnQRCodeReadListener {
-
     void onQRCodeRead(String text, PointF[] points);
   }
-
-  private OnQRCodeReadListener mOnQRCodeReadListener;
 
   private static final String TAG = QRCodeReaderView.class.getName();
 
   private QRCodeReader mQRCodeReader;
+
   private int mPreviewWidth;
   private int mPreviewHeight;
-  private CameraManager mCameraManager;
   private boolean mQrDecodingEnabled = true;
+  private CameraManager mCameraManager;
   private DecodeFrameTask decodeFrameTask;
+  private Map<DecodeHintType, Object> decodeHints;
+  private OnQRCodeReadListener mOnQRCodeReadListener;
 
   public QRCodeReaderView(Context context) {
     this(context, null);
@@ -98,6 +103,15 @@ public class QRCodeReaderView extends SurfaceView
    */
   public void setQRDecodingEnabled(boolean qrDecodingEnabled) {
     this.mQrDecodingEnabled = qrDecodingEnabled;
+  }
+
+  /**
+   * Set QR hints required for decoding
+   *
+   * @param decodeHints hints for decoding qrcode
+   */
+  public void setDecodeHints(Map<DecodeHintType, Object> decodeHints) {
+    this.decodeHints = decodeHints;
   }
 
   /**
@@ -182,7 +196,7 @@ public class QRCodeReaderView extends SurfaceView
       // Indicate camera, our View dimensions
       mCameraManager.openDriver(holder, this.getWidth(), this.getHeight());
     } catch (IOException e) {
-      Log.w(TAG, "Can not openDriver: " + e.getMessage());
+      Log.w(TAG, "Cannot openDriver: " + e.getMessage());
       mCameraManager.closeDriver();
     }
 
@@ -231,11 +245,11 @@ public class QRCodeReaderView extends SurfaceView
   // Called when camera take a frame
   @Override public void onPreviewFrame(byte[] data, Camera camera) {
     if (!mQrDecodingEnabled || (decodeFrameTask != null
-        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
+            && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
       return;
     }
 
-    decodeFrameTask = new DecodeFrameTask(this);
+    decodeFrameTask = new DecodeFrameTask(this, decodeHints);
     decodeFrameTask.execute(data);
   }
 
@@ -244,12 +258,10 @@ public class QRCodeReaderView extends SurfaceView
     if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
       // this device has a camera
       return true;
-    } else if (getContext().getPackageManager()
-        .hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+    } else if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
       // this device has a front camera
       return true;
-    } else if (getContext().getPackageManager()
-        .hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+    } else if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
       // this device has any camera
       return true;
     } else {
@@ -262,15 +274,14 @@ public class QRCodeReaderView extends SurfaceView
    * Fix for the camera Sensor on some devices (ex.: Nexus 5x)
    * http://developer.android.com/intl/pt-br/reference/android/hardware/Camera.html#setDisplayOrientation(int)
    */
-  @SuppressWarnings("deprecation") private int getCameraDisplayOrientation() {
+  private int getCameraDisplayOrientation() {
     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.GINGERBREAD) {
       return 90;
     }
 
     Camera.CameraInfo info = new Camera.CameraInfo();
     android.hardware.Camera.getCameraInfo(mCameraManager.getPreviewCameraId(), info);
-    WindowManager windowManager =
-        (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
     int rotation = windowManager.getDefaultDisplay().getRotation();
     int degrees = 0;
     switch (rotation) {
@@ -301,9 +312,11 @@ public class QRCodeReaderView extends SurfaceView
   private static class DecodeFrameTask extends AsyncTask<byte[], Void, Result> {
 
     private final WeakReference<QRCodeReaderView> viewRef;
+    private final WeakReference<Map<DecodeHintType, Object>> hintsRef;
 
-    public DecodeFrameTask(QRCodeReaderView view) {
+    public DecodeFrameTask(QRCodeReaderView view, Map<DecodeHintType, Object> hints) {
       viewRef = new WeakReference<>(view);
+      hintsRef = new WeakReference<>(hints);
     }
 
     @Override protected Result doInBackground(byte[]... params) {
@@ -312,21 +325,12 @@ public class QRCodeReaderView extends SurfaceView
         return null;
       }
 
-      final PlanarYUVLuminanceSource source =
-          view.mCameraManager.buildLuminanceSource(params[0], view.mPreviewWidth,
-              view.mPreviewHeight);
-
-      final HybridBinarizer hybBin = new HybridBinarizer(source);
-      final BinaryBitmap bitmap = new BinaryBitmap(hybBin);
-
+      final PlanarYUVLuminanceSource source = view.mCameraManager.buildLuminanceSource(params[0], view.mPreviewWidth, view.mPreviewHeight);
+      final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
       try {
-        return view.mQRCodeReader.decode(bitmap);
-      } catch (ChecksumException e) {
-        Log.d(TAG, "ChecksumException", e);
-      } catch (NotFoundException e) {
-        Log.d(TAG, "No QR Code found");
-      } catch (FormatException e) {
-        Log.d(TAG, "FormatException", e);
+        return view.mQRCodeReader.decode(bitmap, hintsRef.get());
+      } catch (ChecksumException | NotFoundException | FormatException e) {
+        Log.d(TAG, "", e);
       } finally {
         view.mQRCodeReader.reset();
       }
@@ -342,15 +346,14 @@ public class QRCodeReaderView extends SurfaceView
       // Notify we found a QRCode
       if (view != null && result != null && view.mOnQRCodeReadListener != null) {
         // Transform resultPoints to View coordinates
-        final PointF[] transformedPoints =
-            transformToViewCoordinates(view, result.getResultPoints());
+        final PointF[] transformedPoints = transformToViewCoordinates(view, result.getResultPoints());
         view.mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
       }
     }
 
     /**
      * Transform result to surfaceView coordinates
-     *
+     * <p/>
      * This method is needed because coordinates are given in landscape camera coordinates when
      * device is in portrait mode and different coordinates otherwise.
      *
@@ -358,54 +361,43 @@ public class QRCodeReaderView extends SurfaceView
      */
     private PointF[] transformToViewCoordinates(QRCodeReaderView view, ResultPoint[] resultPoints) {
       int orientation = view.getCameraDisplayOrientation();
-      if (orientation == 90 || orientation == 270) {
-        return transformToPortraitViewCoordinates(view, resultPoints);
-      } else {
-        return transformToLandscapeViewCoordinates(view, resultPoints);
-      }
-    }
+      boolean isPortrait = (orientation == 90 || orientation == 270);
 
-    private PointF[] transformToLandscapeViewCoordinates(QRCodeReaderView view,
-        ResultPoint[] resultPoints) {
       PointF[] transformedPoints = new PointF[resultPoints.length];
+
       int index = 0;
-      float origX = view.mCameraManager.getPreviewSize().x;
-      float origY = view.mCameraManager.getPreviewSize().y;
-      float scaleX = view.getWidth() / origX;
-      float scaleY = view.getHeight() / origY;
+      Point previewSize = view.mCameraManager.getPreviewSize();
+      float previewX = previewSize.x;
+      float previewY = previewSize.y;
+      float scaleX = view.getWidth() / (isPortrait ? previewY : previewX);
+      float scaleY = view.getHeight() / (isPortrait ? previewX : previewY);
 
       for (ResultPoint point : resultPoints) {
-        PointF transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX,
-            view.getHeight() - point.getY() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-          transformedPoint.x = view.getWidth() - transformedPoint.x;
+
+        PointF transformedPoint;
+        if (isPortrait) {
+          transformedPoint = new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
+
+          if (orientation == 270) {
+            transformedPoint.x = view.getWidth() - transformedPoint.x;
+            transformedPoint.y = view.getHeight() - transformedPoint.y;
+          }
+        } else {
+          transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX, view.getHeight() - point.getY() * scaleY);
         }
+
+        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+          if (isPortrait) {
+            transformedPoint.y = view.getHeight() - transformedPoint.y;
+          } else {
+            transformedPoint.x = view.getWidth() - transformedPoint.x;
+          }
+        }
+
         transformedPoints[index] = transformedPoint;
         index++;
       }
 
-      return transformedPoints;
-    }
-
-    private PointF[] transformToPortraitViewCoordinates(QRCodeReaderView view,
-        ResultPoint[] resultPoints) {
-      PointF[] transformedPoints = new PointF[resultPoints.length];
-
-      int index = 0;
-      float previewX = view.mCameraManager.getPreviewSize().x;
-      float previewY = view.mCameraManager.getPreviewSize().y;
-      float scaleX = view.getWidth() / previewY;
-      float scaleY = view.getHeight() / previewX;
-
-      for (ResultPoint point : resultPoints) {
-        PointF transformedPoint =
-            new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-          transformedPoint.y = view.getHeight() - transformedPoint.y;
-        }
-        transformedPoints[index] = transformedPoint;
-        index++;
-      }
       return transformedPoints;
     }
   }
