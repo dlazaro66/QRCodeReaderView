@@ -93,7 +93,7 @@ Add QRCodeReaderView dependency to your build.gradle
 ```groovy
 
 dependencies{
-      compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0'
+      compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.1'
 }
 ```
 
@@ -102,7 +102,7 @@ Note: There is an issue with gradle 2.10, if you declare your dependency and it 
 ```groovy
 
 dependencies{
-      compile ('com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.0@aar'){
+      compile ('com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.1@aar'){
         transitive = true
       }
 }
