@@ -71,6 +71,10 @@ public class QRCodeReaderView extends SurfaceView
   public QRCodeReaderView(Context context, AttributeSet attrs) {
     super(context, attrs);
 
+    if (isInEditMode()) {
+      return;
+    }
+
     if (checkCameraHardware()) {
       mCameraManager = new CameraManager(getContext());
       mCameraManager.setPreviewCallback(this);
