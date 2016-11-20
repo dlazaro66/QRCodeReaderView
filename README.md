@@ -144,14 +144,8 @@ Who's using it
 
 *Does your app use QRCodeReaderView? If you want to be featured on this list drop me a line.*
 
-* [Swapcard][6]
+* [Swapcard][2]
 
-Contributors
-------------
-* [David Lázaro Esparcia][2]
-* [Samuel Guirado Navarro][3]
-* [Daniel Comas Fernández][4]
-* [Kirill Boyarshinov][5]
 
 License
 -------
@@ -172,11 +166,7 @@ License
 
 
 [1]: https://github.com/zxing/zxing/
-[2]: https://github.com/dlazaro66
-[3]: https://github.com/saguinav
-[4]: https://github.com/danicomas
-[5]: https://github.com/kboyarshinov
-[6]: https://www.swapcard.com/
+[2]: https://www.swapcard.com/
 
 
 
