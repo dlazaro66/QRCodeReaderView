@@ -79,7 +79,7 @@ public final class CameraManager {
     }
   }
 
-  public void focus() {
+  public void forceAutoFocus() {
     if (autoFocusManager != null) {
       autoFocusManager.start();
     }
