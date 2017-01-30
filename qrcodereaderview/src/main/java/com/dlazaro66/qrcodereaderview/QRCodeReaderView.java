@@ -131,9 +131,9 @@ public class QRCodeReaderView extends SurfaceView
   }
 
   /**
-   * Trigger a manual focus
+   * Trigger an auto focus
    */
-  public void focus() {
+  public void forceAutoFocus() {
     if (mCameraManager != null) {
       mCameraManager.focus();
     }
