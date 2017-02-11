@@ -1,0 +1,15 @@
+language: android
+jdk: oraclejdk8
+
+android:
+  components:
+    - tools
+    - build-tools-23.0.3
+    - platform-tools
+    - android-25
+    - extra-android-support
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+script:
+  ./gradlew checkstyle build test
