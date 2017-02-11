@@ -23,6 +23,10 @@ version = libVersionCode
 
 android {
 
+  lintOptions {
+    abortOnError false
+  }
+
   compileSdkVersion 25
   buildToolsVersion "24.0.2"
 

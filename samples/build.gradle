@@ -4,6 +4,10 @@ android {
   compileSdkVersion 25
   buildToolsVersion "24.0.2"
 
+  lintOptions {
+    abortOnError false
+  }
+
   defaultConfig {
     applicationId "com.example.qr_readerexample"
     minSdkVersion 14
