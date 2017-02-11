@@ -78,8 +78,8 @@ public class QRCodeReaderView extends SurfaceView
     if (checkCameraHardware()) {
       mCameraManager = new CameraManager(getContext());
       mCameraManager.setPreviewCallback(this);
-
       getHolder().addCallback(this);
+      setBackCamera();
     } else {
       throw new RuntimeException("Error: Camera not found");
     }
