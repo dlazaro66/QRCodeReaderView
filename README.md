@@ -33,7 +33,7 @@ Usage
 	public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     private TextView resultTextView;
-	private QRCodeReaderView qrCodeReaderView;
+	private QRCodeReaderView mydecoderview;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ Usage
         mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
 
-    	// Use this function to enable/disable decoding
+    	  // Use this function to enable/disable decoding
         mydecoderview.setQRDecodingEnabled(true);
 
         // Use this function to change the autofocus interval (default is 5 secs)
