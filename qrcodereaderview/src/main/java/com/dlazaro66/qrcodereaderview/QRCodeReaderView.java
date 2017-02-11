@@ -314,6 +314,7 @@ public class QRCodeReaderView extends SurfaceView
   private static class DecodeFrameTask extends AsyncTask<byte[], Void, Result> {
 
     private final WeakReference<QRCodeReaderView> viewRef;
+    private final QRToViewPointTransformer qrToViewPointTransformer = new QRToViewPointTransformer();
 
     public DecodeFrameTask(QRCodeReaderView view) {
       viewRef = new WeakReference<>(view);
@@ -370,56 +371,14 @@ public class QRCodeReaderView extends SurfaceView
      * @return a new PointF array with transformed points
      */
     private PointF[] transformToViewCoordinates(QRCodeReaderView view, ResultPoint[] resultPoints) {
-      int orientation = view.getCameraDisplayOrientation();
-      if (orientation == 90 || orientation == 270) {
-        return transformToPortraitViewCoordinates(view, resultPoints);
-      } else {
-        return transformToLandscapeViewCoordinates(view, resultPoints);
-      }
-    }
+      int orientationDegrees = view.getCameraDisplayOrientation();
+      Orientation orientation = (orientationDegrees == 90 || orientationDegrees == 270) ? Orientation.PORTRAIT : Orientation.LANDSCAPE;
+      Point viewSize = new Point(view.getWidth(), view.getHeight());
+      Point cameraPreviewSize = view.mCameraManager.getPreviewSize();
+      boolean isMirrorCamera = view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
 
-    private PointF[] transformToLandscapeViewCoordinates(QRCodeReaderView view,
-        ResultPoint[] resultPoints) {
-      PointF[] transformedPoints = new PointF[resultPoints.length];
-      int index = 0;
-      float origX = view.mCameraManager.getPreviewSize().x;
-      float origY = view.mCameraManager.getPreviewSize().y;
-      float scaleX = view.getWidth() / origX;
-      float scaleY = view.getHeight() / origY;
-
-      for (ResultPoint point : resultPoints) {
-        PointF transformedPoint = new PointF(view.getWidth() - point.getX() * scaleX,
-            view.getHeight() - point.getY() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-          transformedPoint.x = view.getWidth() - transformedPoint.x;
-        }
-        transformedPoints[index] = transformedPoint;
-        index++;
-      }
-
-      return transformedPoints;
-    }
-
-    private PointF[] transformToPortraitViewCoordinates(QRCodeReaderView view,
-        ResultPoint[] resultPoints) {
-      PointF[] transformedPoints = new PointF[resultPoints.length];
-
-      int index = 0;
-      float previewX = view.mCameraManager.getPreviewSize().x;
-      float previewY = view.mCameraManager.getPreviewSize().y;
-      float scaleX = view.getWidth() / previewY;
-      float scaleY = view.getHeight() / previewX;
-
-      for (ResultPoint point : resultPoints) {
-        PointF transformedPoint =
-            new PointF((previewY - point.getY()) * scaleX, point.getX() * scaleY);
-        if (view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-          transformedPoint.y = view.getHeight() - transformedPoint.y;
-        }
-        transformedPoints[index] = transformedPoint;
-        index++;
-      }
-      return transformedPoints;
+      return qrToViewPointTransformer.transform(resultPoints, isMirrorCamera, orientation, viewSize,
+          cameraPreviewSize);
     }
   }
 }
