@@ -131,6 +131,15 @@ public class QRCodeReaderView extends SurfaceView
   }
 
   /**
+   * Trigger an auto focus
+   */
+  public void forceAutoFocus() {
+    if (mCameraManager != null) {
+      mCameraManager.forceAutoFocus();
+    }
+  }
+
+  /**
    * Set Torch enabled/disabled.
    * default value is false
    *

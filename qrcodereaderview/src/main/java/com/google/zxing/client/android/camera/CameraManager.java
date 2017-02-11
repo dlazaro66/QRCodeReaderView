@@ -79,6 +79,12 @@ public final class CameraManager {
     }
   }
 
+  public void forceAutoFocus() {
+    if (autoFocusManager != null) {
+      autoFocusManager.start();
+    }
+  }
+
   public Point getPreviewSize() {
     return configManager.getCameraResolution();
   }
