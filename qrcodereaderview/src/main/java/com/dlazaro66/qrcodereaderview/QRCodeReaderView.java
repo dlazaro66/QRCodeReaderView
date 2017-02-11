@@ -17,6 +17,7 @@ package com.dlazaro66.qrcodereaderview;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -26,6 +27,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
@@ -36,6 +38,7 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
