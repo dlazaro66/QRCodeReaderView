@@ -1,4 +1,4 @@
-QRCodeReaderView [![Download](https://api.bintray.com/packages/dlazaro66/maven/QRCodeReaderView/images/download.svg) ](https://bintray.com/dlazaro66/maven/QRCodeReaderView/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-QRCodeReaderView-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/1891)
+QRCodeReaderView [![Download](https://api.bintray.com/packages/dlazaro66/maven/QRCodeReaderView/images/download.svg) ](https://bintray.com/dlazaro66/maven/QRCodeReaderView/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-QRCodeReaderView-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/1891) [![Build Status](https://travis-ci.org/dlazaro66/QRCodeReaderView.svg?branch=master)](https://travis-ci.org/dlazaro66/QRCodeReaderView)
 ===
 
 #### Modification of ZXING Barcode Scanner project for easy Android QR-Code detection and AR purposes. ####
