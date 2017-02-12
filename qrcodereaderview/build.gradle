@@ -86,8 +86,8 @@ install {
 
 
 bintray {
-  user = project.property('bintrayUser')
-  key = project.property('bintrayApiKey')
+  user = project.findProperty('bintrayUser')
+  key = project.findProperty('bintrayApiKey')
   configurations = ['archives']
   publish = true
   pkg {
