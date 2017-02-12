@@ -17,6 +17,7 @@ allprojects {
     jcenter()
   }
   apply plugin: 'checkstyle'
+  apply plugin: 'pmd'
 
   task checkstyle(type: Checkstyle) {
     configFile file("${project.rootDir}/checkstyle.xml")
@@ -25,6 +26,19 @@ allprojects {
     exclude '**/gen/**'
 
     classpath = files()
+  }
+
+  pmd {
+    consoleOutput = true
+  }
+
+  task pmd(type: Pmd) {
+    ruleSetFiles = files("${project.rootDir}/pmd.xml")
+    ruleSets = ["java-basic", "java-braces", "java-strings"]
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
   }
 }
 
