@@ -42,6 +42,8 @@ import com.google.zxing.qrcode.QRCodeReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import static android.hardware.Camera.getCameraInfo;
+
 /**
  * QRCodeReaderView Class which uses ZXING lib and let you easily integrate a QR decoder view.
  * Take some classes and made some modifications in the original ZXING - Barcode Scanner project.
@@ -246,8 +248,8 @@ public class QRCodeReaderView extends SurfaceView
 
   // Called when camera take a frame
   @Override public void onPreviewFrame(byte[] data, Camera camera) {
-    if (!mQrDecodingEnabled || (decodeFrameTask != null
-        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
+    if (!mQrDecodingEnabled || decodeFrameTask != null
+        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING) {
       return;
     }
 
@@ -279,7 +281,7 @@ public class QRCodeReaderView extends SurfaceView
     }
 
     Camera.CameraInfo info = new Camera.CameraInfo();
-    android.hardware.Camera.getCameraInfo(mCameraManager.getPreviewCameraId(), info);
+    getCameraInfo(mCameraManager.getPreviewCameraId(), info);
     WindowManager windowManager =
         (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
     int rotation = windowManager.getDefaultDisplay().getRotation();
@@ -374,7 +376,7 @@ public class QRCodeReaderView extends SurfaceView
     private PointF[] transformToViewCoordinates(QRCodeReaderView view, ResultPoint[] resultPoints) {
       int orientationDegrees = view.getCameraDisplayOrientation();
       Orientation orientation =
-          (orientationDegrees == 90 || orientationDegrees == 270) ? Orientation.PORTRAIT
+          orientationDegrees == 90 || orientationDegrees == 270 ? Orientation.PORTRAIT
               : Orientation.LANDSCAPE;
       Point viewSize = new Point(view.getWidth(), view.getHeight());
       Point cameraPreviewSize = view.mCameraManager.getPreviewSize();

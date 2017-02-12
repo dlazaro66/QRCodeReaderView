@@ -161,18 +161,16 @@ public final class CameraManager {
    */
   public synchronized void setTorchEnabled(boolean enabled) {
     OpenCamera theCamera = openCamera;
-    if (theCamera != null) {
-      if (enabled != configManager.getTorchState(theCamera.getCamera())) {
-        boolean wasAutoFocusManager = autoFocusManager != null;
-        if (wasAutoFocusManager) {
-          autoFocusManager.stop();
-          autoFocusManager = null;
-        }
-        configManager.setTorchEnabled(theCamera.getCamera(), enabled);
-        if (wasAutoFocusManager) {
-          autoFocusManager = new AutoFocusManager(theCamera.getCamera());
-          autoFocusManager.start();
-        }
+    if (theCamera != null && enabled != configManager.getTorchState(theCamera.getCamera())) {
+      boolean wasAutoFocusManager = autoFocusManager != null;
+      if (wasAutoFocusManager) {
+        autoFocusManager.stop();
+        autoFocusManager = null;
+      }
+      configManager.setTorchEnabled(theCamera.getCamera(), enabled);
+      if (wasAutoFocusManager) {
+        autoFocusManager = new AutoFocusManager(theCamera.getCamera());
+        autoFocusManager.start();
       }
     }
   }
