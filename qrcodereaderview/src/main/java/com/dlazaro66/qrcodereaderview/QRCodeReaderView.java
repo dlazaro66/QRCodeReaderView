@@ -264,19 +264,14 @@ public class QRCodeReaderView extends SurfaceView
         .hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
       // this device has a front camera
       return true;
-    } else if (getContext().getPackageManager()
-        .hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-      // this device has any camera
-      return true;
     } else {
-      // no camera on this device
-      return false;
+      // this device has any camera
+      return getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
   }
 
   /**
    * Fix for the camera Sensor on some devices (ex.: Nexus 5x)
-   * http://developer.android.com/intl/pt-br/reference/android/hardware/Camera.html#setDisplayOrientation(int)
    */
   @SuppressWarnings("deprecation") private int getCameraDisplayOrientation() {
     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.GINGERBREAD) {
@@ -302,6 +297,8 @@ public class QRCodeReaderView extends SurfaceView
       case Surface.ROTATION_270:
         degrees = 270;
         break;
+      default:
+        break;
     }
 
     int result;
@@ -317,7 +314,8 @@ public class QRCodeReaderView extends SurfaceView
   private static class DecodeFrameTask extends AsyncTask<byte[], Void, Result> {
 
     private final WeakReference<QRCodeReaderView> viewRef;
-    private final QRToViewPointTransformer qrToViewPointTransformer = new QRToViewPointTransformer();
+    private final QRToViewPointTransformer qrToViewPointTransformer =
+        new QRToViewPointTransformer();
 
     public DecodeFrameTask(QRCodeReaderView view) {
       viewRef = new WeakReference<>(view);
@@ -375,10 +373,13 @@ public class QRCodeReaderView extends SurfaceView
      */
     private PointF[] transformToViewCoordinates(QRCodeReaderView view, ResultPoint[] resultPoints) {
       int orientationDegrees = view.getCameraDisplayOrientation();
-      Orientation orientation = (orientationDegrees == 90 || orientationDegrees == 270) ? Orientation.PORTRAIT : Orientation.LANDSCAPE;
+      Orientation orientation =
+          (orientationDegrees == 90 || orientationDegrees == 270) ? Orientation.PORTRAIT
+              : Orientation.LANDSCAPE;
       Point viewSize = new Point(view.getWidth(), view.getHeight());
       Point cameraPreviewSize = view.mCameraManager.getPreviewSize();
-      boolean isMirrorCamera = view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
+      boolean isMirrorCamera =
+          view.mCameraManager.getPreviewCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
 
       return qrToViewPointTransformer.transform(resultPoints, isMirrorCamera, orientation, viewSize,
           cameraPreviewSize);

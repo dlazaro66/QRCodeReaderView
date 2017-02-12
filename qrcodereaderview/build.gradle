@@ -58,7 +58,8 @@ install {
       project {
         packaging 'aar'
         name 'QRCodeReaderView'
-        description = 'Android view which show camera and notify when there\'s a QR code inside the preview.'
+        description =
+            'Android view which show camera and notify when there\'s a QR code inside the preview.'
         url siteUrl
         licenses {
           license {

@@ -46,8 +46,10 @@ public final class CameraManager {
   private Camera.PreviewCallback previewCallback;
   private int displayOrientation = 0;
 
-  // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
-  // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
+  // PreviewCallback references are also removed from original ZXING authors work,
+  // since we're using our own interface.
+  // FramingRects references are also removed from original ZXING authors work,
+  // since We're using all view size while detecting QR-Codes.
   private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
   private long autofocusIntervalInMs = AutoFocusManager.DEFAULT_AUTO_FOCUS_INTERVAL_MS;
 

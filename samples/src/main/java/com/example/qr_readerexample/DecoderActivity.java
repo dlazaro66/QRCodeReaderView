@@ -88,15 +88,17 @@ public class DecoderActivity extends AppCompatActivity
       Snackbar.make(mainLayout, "Camera access is required to display the camera preview.",
           Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
         @Override public void onClick(View view) {
-          ActivityCompat.requestPermissions(DecoderActivity.this,
-              new String[] { Manifest.permission.CAMERA }, MY_PERMISSION_REQUEST_CAMERA);
+          ActivityCompat.requestPermissions(DecoderActivity.this, new String[] {
+              Manifest.permission.CAMERA
+          }, MY_PERMISSION_REQUEST_CAMERA);
         }
       }).show();
     } else {
       Snackbar.make(mainLayout, "Permission is not available. Requesting camera permission.",
           Snackbar.LENGTH_SHORT).show();
-      ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA },
-          MY_PERMISSION_REQUEST_CAMERA);
+      ActivityCompat.requestPermissions(this, new String[] {
+          Manifest.permission.CAMERA
+      }, MY_PERMISSION_REQUEST_CAMERA);
     }
   }
 

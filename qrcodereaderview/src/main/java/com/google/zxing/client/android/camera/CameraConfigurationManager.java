@@ -45,6 +45,8 @@ final class CameraConfigurationManager {
   // accidental selection of very low resolution on some devices.
   private static final int MIN_PREVIEW_PIXELS = 470 * 320; // normal screen
   private static final int MAX_PREVIEW_PIXELS = 1280 * 720;
+  private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
+  private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
   private final Context context;
 
   private Point resolution;
@@ -165,8 +167,13 @@ final class CameraConfigurationManager {
     if (afterSize != null && (bestPreviewSize.x != afterSize.width
         || bestPreviewSize.y != afterSize.height)) {
       Log.w(TAG,
-          "Camera said it supported preview size " + bestPreviewSize.x + 'x' + bestPreviewSize.y +
-              ", but after setting it, preview size is " + afterSize.width + 'x'
+          "Camera said it supported preview size "
+              + bestPreviewSize.x
+              + 'x'
+              + bestPreviewSize.y
+              + ", but after setting it, preview size is "
+              + afterSize.width
+              + 'x'
               + afterSize.height);
       bestPreviewSize.x = afterSize.width;
       bestPreviewSize.y = afterSize.height;
@@ -324,8 +331,6 @@ final class CameraConfigurationManager {
 
   public static void setBestExposure(Camera.Parameters parameters, boolean lightOn) {
 
-    final float MAX_EXPOSURE_COMPENSATION = 1.5f;
-    final float MIN_EXPOSURE_COMPENSATION = 0.0f;
     int minExposure = parameters.getMinExposureCompensation();
     int maxExposure = parameters.getMaxExposureCompensation();
     float step = parameters.getExposureCompensationStep();
