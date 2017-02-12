@@ -113,7 +113,8 @@ And in some cases, you need to clean your Gradle cache
 Do you want to contribute?
 --------------------------
 
-Please send a PR or open an issue with your comments!
+Please send a PR or open an issue with your comments.
+See [CONTRIBUTING file](CONTRIBUTING.md) for further information
 
 Libraries used in this project
 ------------------------------
@@ -150,7 +151,7 @@ Who's using it
 License
 -------
 
-    Copyright 2013 David Lázaro
+    Copyright 2017 David Lázaro
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
