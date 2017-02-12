@@ -98,7 +98,7 @@ bintray {
       vcsTag = libVersionCode
       gpg {
         sign = true //Determines whether to GPG sign the files. The default is false
-        passphrase = project.property('gpgPassphrase') //Optional. The passphrase for GPG signing'
+        passphrase = project.findProperty('gpgPassphrase') //Optional. The passphrase for GPG signing'
       }
     }
     repo = "maven"
