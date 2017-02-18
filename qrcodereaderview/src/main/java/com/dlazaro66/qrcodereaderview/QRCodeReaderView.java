@@ -30,6 +30,7 @@ import android.view.WindowManager;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
@@ -41,6 +42,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 import static android.hardware.Camera.getCameraInfo;
 
@@ -68,6 +70,7 @@ public class QRCodeReaderView extends SurfaceView
   private CameraManager mCameraManager;
   private boolean mQrDecodingEnabled = true;
   private DecodeFrameTask decodeFrameTask;
+  private Map<DecodeHintType, Object> decodeHints;
 
   public QRCodeReaderView(Context context) {
     this(context, null);
@@ -107,6 +110,15 @@ public class QRCodeReaderView extends SurfaceView
    */
   public void setQRDecodingEnabled(boolean qrDecodingEnabled) {
     this.mQrDecodingEnabled = qrDecodingEnabled;
+  }
+
+  /**
+   * Set QR hints required for decoding
+   *
+   * @param decodeHints hints for decoding qrcode
+   */
+  public void setDecodeHints(Map<DecodeHintType, Object> decodeHints) {
+    this.decodeHints = decodeHints;
   }
 
   /**
@@ -253,7 +265,7 @@ public class QRCodeReaderView extends SurfaceView
       return;
     }
 
-    decodeFrameTask = new DecodeFrameTask(this);
+    decodeFrameTask = new DecodeFrameTask(this, decodeHints);
     decodeFrameTask.execute(data);
   }
 
@@ -316,11 +328,13 @@ public class QRCodeReaderView extends SurfaceView
   private static class DecodeFrameTask extends AsyncTask<byte[], Void, Result> {
 
     private final WeakReference<QRCodeReaderView> viewRef;
+    private final WeakReference<Map<DecodeHintType, Object>> hintsRef;
     private final QRToViewPointTransformer qrToViewPointTransformer =
         new QRToViewPointTransformer();
 
-    public DecodeFrameTask(QRCodeReaderView view) {
+    public DecodeFrameTask(QRCodeReaderView view, Map<DecodeHintType, Object> hints) {
       viewRef = new WeakReference<>(view);
+      hintsRef = new WeakReference<>(hints);
     }
 
     @Override protected Result doInBackground(byte[]... params) {
@@ -337,7 +351,7 @@ public class QRCodeReaderView extends SurfaceView
       final BinaryBitmap bitmap = new BinaryBitmap(hybBin);
 
       try {
-        return view.mQRCodeReader.decode(bitmap);
+        return view.mQRCodeReader.decode(bitmap, hintsRef.get());
       } catch (ChecksumException e) {
         Log.d(TAG, "ChecksumException", e);
       } catch (NotFoundException e) {
