@@ -33,30 +33,30 @@ Usage
 	public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     private TextView resultTextView;
-	private QRCodeReaderView mydecoderview;
+	private QRCodeReaderView qrCodeReaderView;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decoder);
         
-        mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
-        mydecoderview.setOnQRCodeReadListener(this);
+        qrCodeReaderView = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
+        qrCodeReaderView.setOnQRCodeReadListener(this);
 
     	  // Use this function to enable/disable decoding
-        mydecoderview.setQRDecodingEnabled(true);
+        qrCodeReaderView.setQRDecodingEnabled(true);
 
         // Use this function to change the autofocus interval (default is 5 secs)
-        mydecoderview.setAutofocusInterval(2000L);
+        qrCodeReaderView.setAutofocusInterval(2000L);
 
         // Use this function to enable/disable Torch
-        mydecoderview.setTorchEnabled(true);
+        qrCodeReaderView.setTorchEnabled(true);
 
         // Use this function to set front camera preview
-        mydecoderview.setFrontCamera();
+        qrCodeReaderView.setFrontCamera();
 
         // Use this function to set back camera preview
-        mydecoderview.setBackCamera();
+        qrCodeReaderView.setBackCamera();
     }
 
     // Called when a QR is decoded
