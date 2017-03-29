@@ -14,7 +14,7 @@ plugins {
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def libVersionCode = '2.0.1'
+def libVersionCode = '2.0.2'
 def siteUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib'
 def gitUrl = 'https://github.com/dlazaro66/QRCodeReaderView/tree/master/QRCodeReaderView-lib.git'
 
