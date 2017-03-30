@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.1'
+  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
   compile 'com.android.support:support-v4:25.1.0'
   compile 'com.android.support:design:25.1.0'
 }
