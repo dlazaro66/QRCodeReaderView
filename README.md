@@ -33,7 +33,7 @@ Usage
 public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     private TextView resultTextView;
-	private QRCodeReaderView qrCodeReaderView;
+	private QRCodeReaderView mydecoderview;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +70,13 @@ public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		qrCodeReaderView.startCamera();
+		mydecoderview.startCamera();
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		qrCodeReaderView.stopCamera();
+		mydecoderview.stopCamera();
 	}
 }
 ```
