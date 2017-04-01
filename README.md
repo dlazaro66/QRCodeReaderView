@@ -30,7 +30,7 @@ Usage
 - You can place widgets or views over QRDecoderView.
  
 ```java
-	public class DecoderActivity extends Activity implements OnQRCodeReadListener {
+public class DecoderActivity extends Activity implements OnQRCodeReadListener {
 
     private TextView resultTextView;
 	private QRCodeReaderView qrCodeReaderView;
@@ -81,14 +81,10 @@ Usage
 }
 ```
 
-
 Add it to your project
 ----------------------
 
-
 Add QRCodeReaderView dependency to your build.gradle
-
-
 
 ```groovy
 
@@ -119,13 +115,12 @@ See [CONTRIBUTING file](CONTRIBUTING.md) for further information
 Libraries used in this project
 ------------------------------
 
-* [ZXING] [1]
+* [ZXING][1]
 
 Screenshots
 -----------
 
 ![Image](../master/readme_images/app-example.gif?raw=true)
-
 
 Developed By
 ------------
@@ -147,7 +142,6 @@ Who's using it
 
 * [Swapcard][2]
 
-
 License
 -------
 
@@ -168,23 +162,3 @@ License
 
 [1]: https://github.com/zxing/zxing/
 [2]: https://www.swapcard.com/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
