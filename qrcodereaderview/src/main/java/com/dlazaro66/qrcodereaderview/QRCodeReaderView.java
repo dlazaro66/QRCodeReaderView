@@ -211,7 +211,7 @@ public class QRCodeReaderView extends SurfaceView
     try {
       // Indicate camera, our View dimensions
       mCameraManager.openDriver(holder, this.getWidth(), this.getHeight());
-    } catch (IOException e) {
+    } catch (IOException | RuntimeException e) {
       Log.w(TAG, "Can not openDriver: " + e.getMessage());
       mCameraManager.closeDriver();
     }
