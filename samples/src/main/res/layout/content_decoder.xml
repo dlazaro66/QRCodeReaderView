@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DecoderActivity"
+    android:orientation="vertical"
+    android:weightSum="7"
+    >
+<RelativeLayout
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4"
     >
 
   <com.dlazaro66.qrcodereaderview.QRCodeReaderView
@@ -27,37 +33,97 @@
       android:layout_width="match_parent"
       android:gravity="center"
       android:layout_height="wrap_content"
-      android:layout_alignParentTop="true"
-      android:layout_centerHorizontal="true"
       android:padding="16dp"
       android:textSize="14sp"
       android:textColor="#ffffff"
-      />
+      android:layout_alignParentTop="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true" />
 
   <CheckBox
       android:background="#99000000"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="On/Off flashlight"
-      android:layout_alignParentBottom="true"
       android:textSize="14sp"
       android:padding="16dp"
       android:textColor="#ffffff"
       android:id="@+id/flashlight_checkbox"
       android:checked="false"
-      />
+      android:layout_above="@+id/enable_decoding_checkbox"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true" />
+  <CheckBox
+      android:background="#99000000"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="data visible/invisible"
+      android:textSize="14sp"
+      android:padding="16dp"
+      android:textColor="#ffffff"
+      android:id="@+id/recvdataview"
+      android:checked="false"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true" />
 
   <CheckBox
       android:background="#99000000"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="On/Off QR decoding"
-      android:layout_above="@+id/flashlight_checkbox"
       android:textSize="14sp"
       android:padding="16dp"
       android:textColor="#ffffff"
       android:id="@+id/enable_decoding_checkbox"
       android:checked="true"
-      />
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true" />
 
 </RelativeLayout>
+<LinearLayout
+android:orientation="vertical"
+android:layout_weight="3"
+android:weightSum="6"
+android:layout_width="match_parent"
+android:layout_height="0dp">
+
+<!--<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    >
+  <Button
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="开启数据接收"
+      android:id="@+id/btn_tcpServerConn"/>
+
+  <Button
+      android:id="@+id/btn_tcpServerClose"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="关闭数据接收" />
+
+
+
+
+</LinearLayout>-->
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="5"
+    android:orientation="vertical">
+
+
+  <lecho.lib.hellocharts.view.LineChartView
+      android:id="@+id/line_chart"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#ffffff"
+      android:visibility="gone" />
+</LinearLayout>
+</LinearLayout>
+  </LinearLayout>

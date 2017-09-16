@@ -23,7 +23,8 @@ android {
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
-  compile 'com.android.support:support-v4:25.1.0'
-  compile 'com.android.support:design:25.1.0'
+    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
+    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile files('libs/hellocharts-library-1.5.8.jar')
 }
