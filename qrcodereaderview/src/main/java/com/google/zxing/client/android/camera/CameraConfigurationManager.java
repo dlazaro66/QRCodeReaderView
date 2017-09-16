@@ -308,7 +308,8 @@ final class CameraConfigurationManager {
     }
   }
 
-  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled) {
+  public static void
+  setTorchEnabled(Camera.Parameters parameters, boolean enabled) {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
     if (enabled) {

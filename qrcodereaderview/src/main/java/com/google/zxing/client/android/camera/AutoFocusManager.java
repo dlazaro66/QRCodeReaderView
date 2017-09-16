@@ -32,8 +32,10 @@
 
 package com.google.zxing.client.android.camera;
 
+import android.annotation.TargetApi;
 import android.hardware.Camera;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,6 +81,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
     this.autofocusIntervalMs = autofocusIntervalMs;
   }
 
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private synchronized void autoFocusAgainLater() {
     if (!stopped && outstandingTask == null) {
       AutoFocusTask newTask = new AutoFocusTask();
