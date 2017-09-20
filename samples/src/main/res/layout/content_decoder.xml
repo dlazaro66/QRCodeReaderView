@@ -3,91 +3,121 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="7"
-    >
-<RelativeLayout
-    android:id="@+id/main_layout"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="4"
+    android:orientation="horizontal"
+    android:weightSum="6"
     >
 
-  <com.dlazaro66.qrcodereaderview.QRCodeReaderView
-      android:id="@+id/qrdecoderview"
-      android:layout_width="match_parent"
+  <RelativeLayout
+      android:id="@+id/main_layout"
+      android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentTop="true"
-      />
+      android:layout_weight="3">
 
-  <com.example.qr_readerexample.PointsOverlayView
-      android:id="@+id/points_overlay_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      />
+    <Button
+        android:id="@+id/bt_chartA1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="显示A1数据" />
 
-  <TextView
-      android:background="#55000000"
-      android:id="@+id/result_text_view"
-      android:layout_width="match_parent"
-      android:gravity="center"
-      android:layout_height="wrap_content"
-      android:padding="16dp"
-      android:textSize="14sp"
-      android:textColor="#ffffff"
-      android:layout_alignParentTop="true"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true" />
+    <com.dlazaro66.qrcodereaderview.QRCodeReaderView
+        android:id="@+id/qrdecoderview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bt_chartA1" />
 
-  <CheckBox
+    <com.example.qr_readerexample.PointsOverlayView
+        android:id="@+id/points_overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/bt_chartA1" />
+
+    <TextView
+        android:id="@+id/result_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+
+        android:background="#55000000"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/bt_chartA0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/qrdecoderview"
+        android:layout_toEndOf="@+id/bt_chartA1"
+        android:layout_toRightOf="@+id/bt_chartA1"
+        android:text="显示A0数据" />
+
+    <TextView
+        android:id="@+id/tv_RecvData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/qrdecoderview"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:textColor="#00868B"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bt_chartA0"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/textview" />
+
+    <!--<CheckBox
       android:background="#99000000"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="On/Off flashlight"
+      android:text="打开灯光"
       android:textSize="14sp"
-      android:padding="16dp"
+
       android:textColor="#ffffff"
       android:id="@+id/flashlight_checkbox"
       android:checked="false"
       android:layout_above="@+id/enable_decoding_checkbox"
       android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true" />
-  <CheckBox
+      android:layout_alignParentStart="true" />-->
+    <!--  <CheckBox
       android:background="#99000000"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="data visible/invisible"
+      android:text="实时数据显示"
       android:textSize="14sp"
-      android:padding="16dp"
+
       android:textColor="#ffffff"
       android:id="@+id/recvdataview"
       android:checked="false"
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true"
-      android:layout_alignParentEnd="true" />
-
+      android:layout_alignParentEnd="true" />-->
+    <!--
   <CheckBox
       android:background="#99000000"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="On/Off QR decoding"
+      android:text="开启二维码扫描"
       android:textSize="14sp"
-      android:padding="16dp"
+
       android:textColor="#ffffff"
       android:id="@+id/enable_decoding_checkbox"
       android:checked="true"
       android:layout_alignParentBottom="true"
       android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true" />
+      android:layout_alignParentStart="true" />-->
 
-</RelativeLayout>
-<LinearLayout
+  </RelativeLayout>
+
+
+  <RelativeLayout
 android:orientation="vertical"
 android:layout_weight="3"
-android:weightSum="6"
-android:layout_width="match_parent"
-android:layout_height="0dp">
+android:layout_width="0dp"
+android:layout_height="match_parent">
 
 <!--<LinearLayout
     android:layout_width="match_parent"
@@ -111,19 +141,21 @@ android:layout_height="0dp">
 
 </LinearLayout>-->
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="5"
-    android:orientation="vertical">
 
 
-  <lecho.lib.hellocharts.view.LineChartView
+  <!--<lecho.lib.hellocharts.view.LineChartView
       android:id="@+id/line_chart"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="#ffffff"
-      android:visibility="gone" />
-</LinearLayout>
-</LinearLayout>
+      android:visibility="gone" />-->
+  <ViewStub
+      android:id="@+id/stub_import"
+      android:inflatedId="@+id/panel_import"
+      android:layout="@layout/content_linechart"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom" />
+
+</RelativeLayout>
   </LinearLayout>

@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -21,17 +20,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -71,11 +69,12 @@ public class DecoderActivity extends AppCompatActivity
     private static String recvdate = null;
     private static final String TAG = "DecoderActivity";
     private Button btnStartServer, btnCloseServer;
+    private Button btnChartA1,btnChartA0;
     private static final int PORT = 9999;
     public static boolean  isdatavisible ;
     private static TcpServer tcpServer = null;
     //private MyBtnClicker myBtnClicker = new MyBtnClicker();
-    private DataavlibleListener dataavlible  = new DataavlibleListener();
+    //private DataavlibleListener dataavlible  = new DataavlibleListener();
     private final MyHandler myHandler = new MyHandler(this);
     private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
     @SuppressLint("StaticFieldLeak")
@@ -90,6 +89,8 @@ public class DecoderActivity extends AppCompatActivity
     private CheckBox enableDecodingCheckBox;
     private CheckBox recvdataviewCheckBox;
     private PointsOverlayView pointsOverlayView;
+    private ViewStub viewchart;
+    private TextView tvRecvData;
 
     private static String sensordata;
 
@@ -100,13 +101,6 @@ public class DecoderActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.i(TAG,"Start trace");
-        //加入追踪开关http://blog.csdn.net/luqiang454171826/article/details/7446107
-        final File methodTracingFile = new File(getFilesDir(), "AppStart.trace");
-        Log.d(TAG, "methodTracingPath=" + methodTracingFile.getPath());
-        Debug.startMethodTracing(methodTracingFile.getPath());
-
         //设置无标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置全屏
@@ -124,16 +118,43 @@ public class DecoderActivity extends AppCompatActivity
             requestCameraPermission();
         }
         context = this;
+
+        init();
         //bindID();
         bindListener();
         bindReceiver();
-        //init();
+
         myDb = new DataBaseHelper(this);
 
         startTCP();
     }
 
-   private void startTCP() {
+    private void init() {
+        viewchart = (ViewStub)findViewById(R.id.stub_import);
+        btnChartA1 = (Button)findViewById(R.id.bt_chartA1);
+        btnChartA0 = (Button)findViewById(R.id.bt_chartA0);
+        btnChartA1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewchart.setVisibility(View.VISIBLE);
+               Showgraphs("A1");
+
+            }
+        });
+        btnChartA0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewchart.setVisibility(View.VISIBLE);
+                Showgraphs("A0");
+
+            }
+        });
+        tvRecvData = (TextView)findViewById(R.id.tv_RecvData);
+
+    }
+
+    private void startTCP() {
+       Log.i(TAG,"ip address is :"+getHostIP()+"\n  PORT = 9999");
         tcpServer = new TcpServer(PORT);
         exec.execute(tcpServer);
     }
@@ -153,7 +174,7 @@ public class DecoderActivity extends AppCompatActivity
     }*/
 
     private void bindListener() {
-        recvdataviewCheckBox.setOnCheckedChangeListener(dataavlible);
+        //recvdataviewCheckBox.setOnCheckedChangeListener(dataavlible);
         //btnStartServer.setOnClickListener(myBtnClicker);
        // btnCloseServer.setOnClickListener(myBtnClicker);
     }
@@ -204,21 +225,30 @@ public class DecoderActivity extends AppCompatActivity
                                 sensordata = recvdate.substring(2, 3);
                                 //向数据库添加数据
                                 AddData(sensordata ,"A0");
+                                tvRecvData.setText("设备A0的数据:"+sensordata);
                                 Log.i(TAG, "A0 data is :" + sensordata);
-                                if(isdatavisible )
-                                    Showgraphs("A0");
+
+
+                                //if(viewchart.isShown())
+                                    //Log.i(TAG,"viewchart is shown "+viewchart.isShown());
+                                //判断是否点击复选框，显示数据
+                                //if(isdatavisible )
+                                //viewchart.setVisibility(View.VISIBLE);
+                                    //Showgraphs("A0");
                                 /*else if (lineChart!=null) //添加后无法正常扫码
                                     lineChart.setVisibility(View.INVISIBLE);*/
 
                                 break;
                             case "A1":
                                 sensordata = recvdate.substring(2, 4).trim();
-
+                                tvRecvData.setText("设备A1的数据:"+sensordata);
                                 //向数据库添加数据
                                 AddData(sensordata ,"A1");
                                 Log.i(TAG, "A1 data is :" + sensordata +"; length is "+recvdate.length());
-                                if(isdatavisible)
-                                    Showgraphs("A1");
+                                //if(isdatavisible)
+                                //if (viewchart.isShown())
+                                //viewchart.setVisibility(View.VISIBLE);
+                                    //Showgraphs("A1");
                                /* else if (lineChart!=null)
                                     lineChart.setVisibility(View.INVISIBLE);*/
                                 break;
@@ -232,14 +262,16 @@ public class DecoderActivity extends AppCompatActivity
         }
     }
 
-    public class DataavlibleListener implements CheckBox.OnCheckedChangeListener{
+   /* public class DataavlibleListener implements CheckBox.OnCheckedChangeListener{
 
 
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
            isdatavisible = b;
+
+            //viewchart.setVisibility(View.VISIBLE);
         }
-    }
+    }*/
 
     private void bindReceiver() {
         IntentFilter intentFilter = new IntentFilter("tcpServerReceiver");
@@ -330,17 +362,23 @@ public class DecoderActivity extends AppCompatActivity
     @Override
     public void onQRCodeRead(String devicename, PointF[] points) {
         resultTextView.setText(devicename);
+        //扫描时，让图表设为VISIBLE
+        viewchart.setVisibility(View.VISIBLE);
         switch (devicename){
+
             case "A0":
+                Log.i(TAG,"QR扫描结果为A0");
                 Showgraphs(devicename);
                 break;
             case "A1":
                 Showgraphs(devicename);
+                Log.i(TAG,"QR扫描结果为A1");
                 break;
 
 
         }
-        pointsOverlayView.setPoints(points);
+        //扫描时，不显示三个点
+        //pointsOverlayView.setPoints(points);
     }
 
     private void Showgraphs(String tablename) {
@@ -417,28 +455,28 @@ public class DecoderActivity extends AppCompatActivity
 
         qrCodeReaderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
         resultTextView = (TextView) content.findViewById(R.id.result_text_view);
-        flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
+        //flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
 
-        recvdataviewCheckBox = (CheckBox)content.findViewById(R.id.recvdataview);
-        enableDecodingCheckBox = (CheckBox) content.findViewById(R.id.enable_decoding_checkbox);
+        //recvdataviewCheckBox = (CheckBox)content.findViewById(R.id.recvdataview);
+        //enableDecodingCheckBox = (CheckBox) content.findViewById(R.id.enable_decoding_checkbox);
         pointsOverlayView = (PointsOverlayView) content.findViewById(R.id.points_overlay_view);
 
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();
-        flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+       /* flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 qrCodeReaderView.setTorchEnabled(isChecked);
             }
-        });
+        });*/
 
-        enableDecodingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+       /* enableDecodingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 qrCodeReaderView.setQRDecodingEnabled(isChecked);
             }
-        });
+        });*/
         qrCodeReaderView.startCamera();
     }
 
@@ -489,7 +527,7 @@ public class DecoderActivity extends AppCompatActivity
      */
     private void initLineChart(String xname,String yname){
 
-        Line line = new Line(mPointValues).setColor(Color.parseColor("#0A0A0A"));  //黑色偏蓝
+        Line line = new Line(mPointValues).setColor(Color.parseColor("#00868B"));  //黑色偏蓝
         List<Line> lines = new ArrayList<Line>();
         line.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是倾斜的正方形 （有三种 ：ValueShape.DIAMOND钻石(倾斜的正方形)  ValueShape.CIRCLE圆  ValueShape.SQUARE 方）
         line.setCubic(false);//曲线是否平滑
@@ -506,23 +544,22 @@ public class DecoderActivity extends AppCompatActivity
         //坐标轴
         Axis axisX = new Axis(); //X轴
         axisX.setHasTiltedLabels(true);  //X轴下面坐标轴字体是斜的显示还是直的，true是斜的显示
-//	    axisX.setTextColor(Color.WHITE);  //设置字体颜色
+	    //axisX.setTextColor(Color.WHITE);  //设置字体颜色
         axisX.setTextColor(Color.parseColor("#00868B"));//西门子色
-	    axisX.setName(xname);  //表格名称
-        axisX.setTextSize(11);//设置字体大小
-        axisX.setMaxLabelChars(7); //最多几个X轴坐标，意思就是你的缩放让X轴上数据的个数5<=x<=mAxisValues.length
-        axisX.setValues(mAxisXValues);  //填充X轴的坐标名称,即日期信息
+	    //axisX.setName(xname);  //表格名称
+        axisX.setTextSize(20);//设置字体大小
+        axisX.setMaxLabelChars(5); //最多几个X轴坐标
+        //axisX.setValues(mAxisXValues);  //填充X轴的坐标名称,即日期信息
         data.setAxisXBottom(axisX); //x 轴在底部（底部即x轴的底部）
 //	    data.setAxisXTop(axisX);  //x 轴在顶部
         axisX.setHasLines(true); //x 轴分割线
 
 
+
         Axis axisY = new Axis();  //Y轴
-
-        axisY.setName(yname);//y轴标注
+        //axisY.setName(yname);//y轴标注
         axisY.setTextColor(Color.parseColor("#00868B"));//西门子色
-        axisY.setTextSize(11);//设置字体大小
-
+        axisY.setTextSize(20);//设置字体大小
         data.setAxisYLeft(axisY);  //Y轴设置在左边(左边即y轴的左边)
         //data.setAxisYRight(axisY);  //y轴设置在右边
 
@@ -530,7 +567,7 @@ public class DecoderActivity extends AppCompatActivity
         //设置行为属性，支持缩放、滑动以及平移
         lineChart.setInteractive(true);
         lineChart.setZoomType(ZoomType.HORIZONTAL);  //缩放类型，水平
-        lineChart.setMaxZoom((float) 3);//缩放比例（19个数，一页内只显示19/3 个值）
+        lineChart.setMaxZoom((float) 4);//缩放比例（19个数，一页内只显示19/3 个值）
         lineChart.setLineChartData(data);
         lineChart.setVisibility(View.VISIBLE);
         /**注：下面的7，10只是代表一个数字去类比而已
@@ -546,7 +583,7 @@ public class DecoderActivity extends AppCompatActivity
          */
         Viewport v = new Viewport(lineChart.getMaximumViewport());
         v.left = 0;
-        v.right= 5;
+        v.right= 0;
         lineChart.setCurrentViewport(v);
     }
 

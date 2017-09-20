@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="app_name">QR-ReaderExample</string>
+  <string name="app_name">IOT2040检测器</string>
   <string name="hello_world">Hello world!</string>
   <string name="menu_settings">Settings</string>
+  <string name="textview">值</string>
+  <string name="siemens">#00868B</string>
 
 </resources>
