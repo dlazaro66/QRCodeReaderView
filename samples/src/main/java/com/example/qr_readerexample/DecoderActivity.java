@@ -2,7 +2,6 @@ package com.example.qr_readerexample;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
@@ -54,6 +54,8 @@ import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
+import static com.example.qr_readerexample.R.id.qrdecoderview;
+
 public class DecoderActivity extends AppCompatActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback, OnQRCodeReadListener {
 
@@ -68,13 +70,11 @@ public class DecoderActivity extends AppCompatActivity
 
     private static String recvdate = null;
     private static final String TAG = "DecoderActivity";
-    private Button btnStartServer, btnCloseServer;
     private Button btnChartA1,btnChartA0;
+    private CheckBox cbQR;//打开二维码扫描界面
     private static final int PORT = 9999;
     public static boolean  isdatavisible ;
     private static TcpServer tcpServer = null;
-    //private MyBtnClicker myBtnClicker = new MyBtnClicker();
-    //private DataavlibleListener dataavlible  = new DataavlibleListener();
     private final MyHandler myHandler = new MyHandler(this);
     private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
     @SuppressLint("StaticFieldLeak")
@@ -85,16 +85,10 @@ public class DecoderActivity extends AppCompatActivity
     private ViewGroup mainLayout;
     private TextView resultTextView;
     private QRCodeReaderView qrCodeReaderView;
-    private CheckBox flashlightCheckBox;
-    private CheckBox enableDecodingCheckBox;
-    private CheckBox recvdataviewCheckBox;
     private PointsOverlayView pointsOverlayView;
     private ViewStub viewchart;
     private TextView tvRecvData;
-
     private static String sensordata;
-
-
     static DataBaseHelper myDb;
 
 
@@ -120,19 +114,32 @@ public class DecoderActivity extends AppCompatActivity
         context = this;
 
         init();
-        //bindID();
-        bindListener();
         bindReceiver();
 
         myDb = new DataBaseHelper(this);
 
-        startTCP();
+        //暂停TCP通信
+        //startTCP();
     }
 
     private void init() {
         viewchart = (ViewStub)findViewById(R.id.stub_import);
         btnChartA1 = (Button)findViewById(R.id.bt_chartA1);
         btnChartA0 = (Button)findViewById(R.id.bt_chartA0);
+        cbQR = (CheckBox) findViewById(R.id.cb_qr);
+        cbQR.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                qrCodeReaderView.setVisibility(View.VISIBLE);
+                pointsOverlayView.setVisibility(View.VISIBLE);}
+                else {
+                    qrCodeReaderView.setVisibility(View.INVISIBLE);
+                    pointsOverlayView.setVisibility(View.INVISIBLE);}
+
+            }
+        });
+
         btnChartA1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,22 +175,6 @@ public class DecoderActivity extends AppCompatActivity
             Log.i(TAG,"Data not inserted");
     }
 
-   /* private void init() {
-        btnCloseServer.setEnabled(false);
-        Log.i(TAG,"ip address is :"+getHostIP()+"\n  PORT = 9999");
-    }*/
-
-    private void bindListener() {
-        //recvdataviewCheckBox.setOnCheckedChangeListener(dataavlible);
-        //btnStartServer.setOnClickListener(myBtnClicker);
-       // btnCloseServer.setOnClickListener(myBtnClicker);
-    }
-
-    /*private void bindID() {
-        //btnStartServer = (Button) findViewById(R.id.btn_tcpServerConn);
-       // btnCloseServer = (Button) findViewById(R.id.btn_tcpServerClose);
-
-    }*/
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
 
@@ -227,17 +218,6 @@ public class DecoderActivity extends AppCompatActivity
                                 AddData(sensordata ,"A0");
                                 tvRecvData.setText("设备A0的数据:"+sensordata);
                                 Log.i(TAG, "A0 data is :" + sensordata);
-
-
-                                //if(viewchart.isShown())
-                                    //Log.i(TAG,"viewchart is shown "+viewchart.isShown());
-                                //判断是否点击复选框，显示数据
-                                //if(isdatavisible )
-                                //viewchart.setVisibility(View.VISIBLE);
-                                    //Showgraphs("A0");
-                                /*else if (lineChart!=null) //添加后无法正常扫码
-                                    lineChart.setVisibility(View.INVISIBLE);*/
-
                                 break;
                             case "A1":
                                 sensordata = recvdate.substring(2, 4).trim();
@@ -245,12 +225,7 @@ public class DecoderActivity extends AppCompatActivity
                                 //向数据库添加数据
                                 AddData(sensordata ,"A1");
                                 Log.i(TAG, "A1 data is :" + sensordata +"; length is "+recvdate.length());
-                                //if(isdatavisible)
-                                //if (viewchart.isShown())
-                                //viewchart.setVisibility(View.VISIBLE);
-                                    //Showgraphs("A1");
-                               /* else if (lineChart!=null)
-                                    lineChart.setVisibility(View.INVISIBLE);*/
+
                                 break;
                             default:
                                 break;
@@ -262,51 +237,13 @@ public class DecoderActivity extends AppCompatActivity
         }
     }
 
-   /* public class DataavlibleListener implements CheckBox.OnCheckedChangeListener{
-
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-           isdatavisible = b;
-
-            //viewchart.setVisibility(View.VISIBLE);
-        }
-    }*/
 
     private void bindReceiver() {
         IntentFilter intentFilter = new IntentFilter("tcpServerReceiver");
         registerReceiver(myBroadcastReceiver, intentFilter);
     }
 
-    /*private class MyBtnClicker implements View.OnClickListener {
 
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.btn_tcpServerConn:
-                    Log.i("A", "onClick: 开始");
-                    btnStartServer.setEnabled(false);
-                    btnCloseServer.setEnabled(true);
-                    tcpServer = new TcpServer(PORT);
-                    exec.execute(tcpServer);
-
-
-                    break;
-                case R.id.btn_tcpServerClose:
-                    tcpServer.closeSelf();
-                    btnStartServer.setEnabled(true);
-                    btnCloseServer.setEnabled(false);
-
-                    //以上为被追踪的程序段,
-                    //结束追踪
-                    android.os.Debug.stopMethodTracing();
-
-                    Log.i(TAG,"end trace");
-
-                    break;
-            }
-        }
-    }*/
 
     @Override
     protected void onResume() {
@@ -332,13 +269,6 @@ public class DecoderActivity extends AppCompatActivity
 
     }
 
-    public void showMessage(String title ,String Message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage(Message);
-        builder.show();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -378,7 +308,7 @@ public class DecoderActivity extends AppCompatActivity
 
         }
         //扫描时，不显示三个点
-        //pointsOverlayView.setPoints(points);
+        pointsOverlayView.setPoints(points);
     }
 
     private void Showgraphs(String tablename) {
@@ -409,25 +339,6 @@ public class DecoderActivity extends AppCompatActivity
         getAxisXLables();//获取x轴的的数据
         getAxisPoints();//获取坐标点
         initLineChart(tablename,"value");//初始化
-
-
-       /* //显示数据库中所有数据
-        Cursor res =  myDb.getAllData();
-       // Cursor res =  myDb.getValue(tablename,19);
-        if (res.getCount()==0){
-            //show message
-            showMessage("Error ","Nothing found");
-            return;
-        }
-        StringBuffer buffer = new StringBuffer();
-        while (res.moveToNext()){
-            buffer.append("Id :"+res.getString(0)+"\n");
-            buffer.append("Value :"+res.getString(1)+"\n");
-            buffer.append("TIme :"+res.getString(2)+"\n");
-            buffer.append("devicename :"+res.getString(3)+"\n\n");
-        }
-        //show all data
-        showMessage("Data",buffer.toString());*/
     }
 
     private void requestCameraPermission() {
@@ -453,7 +364,7 @@ public class DecoderActivity extends AppCompatActivity
     private void initQRCodeReaderView() {
         View content = getLayoutInflater().inflate(R.layout.content_decoder, mainLayout, true);
 
-        qrCodeReaderView = (QRCodeReaderView) content.findViewById(R.id.qrdecoderview);
+        qrCodeReaderView = (QRCodeReaderView) content.findViewById(qrdecoderview);
         resultTextView = (TextView) content.findViewById(R.id.result_text_view);
         //flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
 
@@ -464,19 +375,6 @@ public class DecoderActivity extends AppCompatActivity
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();
-       /* flashlightCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                qrCodeReaderView.setTorchEnabled(isChecked);
-            }
-        });*/
-
-       /* enableDecodingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                qrCodeReaderView.setQRDecodingEnabled(isChecked);
-            }
-        });*/
         qrCodeReaderView.startCamera();
     }
 
@@ -610,8 +508,6 @@ public class DecoderActivity extends AppCompatActivity
         }
         Log.i(TAG,"score.length :"+score.length);
     }
-
-
     private  static  String getsystime(){
         SimpleDateFormat df =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(new Date());

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:weightSum="6"
     >
 
@@ -20,20 +20,22 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="显示A1数据" />
+        android:text="A1/A0数据" />
 
     <com.dlazaro66.qrcodereaderview.QRCodeReaderView
         android:id="@+id/qrdecoderview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/bt_chartA1" />
+        android:layout_below="@+id/bt_chartA1"
+        android:visibility="gone"/>
 
     <com.example.qr_readerexample.PointsOverlayView
         android:id="@+id/points_overlay_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/bt_chartA1" />
+        android:layout_below="@+id/bt_chartA1"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/result_text_view"
@@ -51,37 +53,49 @@
         android:id="@+id/bt_chartA0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/qrdecoderview"
-        android:layout_toEndOf="@+id/bt_chartA1"
+        android:text="A0数据"
+        android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/bt_chartA1"
-        android:text="显示A0数据" />
+        android:layout_toEndOf="@+id/bt_chartA1" />
 
     <TextView
         android:id="@+id/tv_RecvData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/qrdecoderview"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:textColor="#00868B"
-        android:layout_alignParentTop="true"
+
         android:layout_toRightOf="@+id/bt_chartA0"
         android:gravity="center_vertical|center_horizontal"
-        android:text="@string/textview" />
+        android:text="@string/readData"
+        android:layout_alignParentTop="true" />
 
-    <!--<CheckBox
-      android:background="#99000000"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="打开灯光"
-      android:textSize="14sp"
 
-      android:textColor="#ffffff"
-      android:id="@+id/flashlight_checkbox"
-      android:checked="false"
-      android:layout_above="@+id/enable_decoding_checkbox"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true" />-->
+
+      <CheckBox
+          android:id="@+id/cb_qr"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/result_text_view"
+          android:layout_toEndOf="@+id/tv_RecvData"
+          android:layout_toRightOf="@+id/tv_RecvData"
+
+          android:text="扫描" />
+
+      <!--<CheckBox
+        android:background="#99000000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开灯光"
+        android:textSize="14sp"
+
+        android:textColor="#ffffff"
+        android:id="@+id/flashlight_checkbox"
+        android:checked="false"
+        android:layout_above="@+id/enable_decoding_checkbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />-->
     <!--  <CheckBox
       android:background="#99000000"
       android:layout_width="wrap_content"
@@ -119,36 +133,7 @@ android:layout_weight="3"
 android:layout_width="0dp"
 android:layout_height="match_parent">
 
-<!--<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    >
-  <Button
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="开启数据接收"
-      android:id="@+id/btn_tcpServerConn"/>
 
-  <Button
-      android:id="@+id/btn_tcpServerClose"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="关闭数据接收" />
-
-
-
-
-</LinearLayout>-->
-
-
-
-  <!--<lecho.lib.hellocharts.view.LineChartView
-      android:id="@+id/line_chart"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="#ffffff"
-      android:visibility="gone" />-->
   <ViewStub
       android:id="@+id/stub_import"
       android:inflatedId="@+id/panel_import"

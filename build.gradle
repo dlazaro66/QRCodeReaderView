@@ -15,7 +15,12 @@ buildscript {
 allprojects {
   repositories {
     jcenter()
+      maven {
+          url 'https://raw.githubusercontent.com/Goddchen/mvn-repo/master/'
+      }
+      mavenCentral()
   }
+
   apply plugin: 'checkstyle'
   apply plugin: 'pmd'
 
