@@ -56,6 +56,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 
 import static com.example.qr_readerexample.R.id.qrdecoderview;
 
+
 public class DecoderActivity extends AppCompatActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback, OnQRCodeReadListener {
 
@@ -119,7 +120,8 @@ public class DecoderActivity extends AppCompatActivity
         myDb = new DataBaseHelper(this);
 
         //暂停TCP通信
-        //startTCP();
+        startTCP();
+
     }
 
     private void init() {
@@ -256,13 +258,11 @@ public class DecoderActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
         if (qrCodeReaderView != null) {
             qrCodeReaderView.stopCamera();
         }
         //关闭折线图
         if (lineChart==null){
-
         }else {
             lineChart.setVisibility(View.INVISIBLE);
         }
@@ -361,17 +361,12 @@ public class DecoderActivity extends AppCompatActivity
         }
     }
 
-    private void initQRCodeReaderView() {
+    public void initQRCodeReaderView() {
         View content = getLayoutInflater().inflate(R.layout.content_decoder, mainLayout, true);
 
         qrCodeReaderView = (QRCodeReaderView) content.findViewById(qrdecoderview);
         resultTextView = (TextView) content.findViewById(R.id.result_text_view);
-        //flashlightCheckBox = (CheckBox) content.findViewById(R.id.flashlight_checkbox);
-
-        //recvdataviewCheckBox = (CheckBox)content.findViewById(R.id.recvdataview);
-        //enableDecodingCheckBox = (CheckBox) content.findViewById(R.id.enable_decoding_checkbox);
         pointsOverlayView = (PointsOverlayView) content.findViewById(R.id.points_overlay_view);
-
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();

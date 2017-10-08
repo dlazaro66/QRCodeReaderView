@@ -1,0 +1,32 @@
+<resources>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="gray">#444440</color>
+    <color name="BlackAndGreen">#00868B</color>
+    <color name="WhiteAndGreen">#008b89</color>
+    <color name="White">#fdfdfd</color>
+    <color name="color_1e1e1e">#1e1e1e</color>
+    <color name="color_353535">#353535</color>
+    <color name="color_E75B5B">#E75B5B</color>
+    <color name="color_FF3636">#FF3636</color>
+    <color name="color_FD8B52">#FD8B52</color>
+    <color name="color_2CA2F4">#2CA2F4</color>
+    <color name="color_969696">#969696</color>
+    <color name="color_d2d2d2">#d2d2d2</color>
+    <color name="color_f6f6f6">#f6f6f6</color>
+    <color name="color_dcdcdc">#dcdcdc</color>
+    <color name="color_F0F1F9">#F0F1F9</color>
+    <color name="color_595959">#595959</color>
+    <color name="text_enabled">#f00</color>
+    <color name="text_disabled">#000</color>
+    <color name="color_323232">#323232</color>
+    <color name="color_FE5E63">#FE5E63</color>
+    <color name="color_6CABFA">#6CABFA</color>
+    <color name="color_FBE382">#FBE382</color>
+    <color name="color_FDA33E">#FDA33E</color>
+    <color name="color_646464">#646464</color>
+    <color name="color_3c3c3c">#3c3c3c</color>
+    <color name="color_e6e6e6">#e6e6e6</color>
+    <color name="color_67DCFF">#67DCFF</color>
+    <color name="color_ffa42f">#ffa42f</color>
+</resources>

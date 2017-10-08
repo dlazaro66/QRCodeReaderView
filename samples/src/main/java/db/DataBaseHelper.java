@@ -98,4 +98,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    //得到平均值
+    public float aver(String device){
+        float aver;
+        float sum=0;
+        SQLiteDatabase db  = this.getWritableDatabase();
+        Cursor res = db.rawQuery("SELECT VALUE   FROM ( SELECT * FROM "+TABLE_NAME +" where DEVICE = '"+ device+"' ) ORDER BY ID DESC",null);
+        while (res.moveToNext())
+            sum += Float.valueOf(res.getString(0));
+        aver = sum/res.getCount();
+        return aver;
+    }
+
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_preview">
+        <item>#040c10</item>
+        <item>#00868B</item>
+        <item>#0b0c0d</item>
+
+    </string-array>
+</resources>
