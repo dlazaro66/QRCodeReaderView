@@ -23,8 +23,11 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import com.dlazaro66.qrcodereaderview.SimpleLog;
 import com.google.zxing.client.android.camera.open.CameraFacing;
 import com.google.zxing.client.android.camera.open.OpenCamera;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,9 +58,12 @@ final class CameraConfigurationManager {
   private Point previewSizeOnScreen;
   private int cwRotationFromDisplayToCamera;
   private int cwNeededRotation;
+  
+  private SimpleLog logger;
 
-  CameraConfigurationManager(Context context) {
+  CameraConfigurationManager(Context context, SimpleLog logger) {
     this.context = context;
+    this.logger = logger;
   }
 
   void initFromCameraParameters(OpenCamera camera, int width, int height) {
@@ -88,34 +94,34 @@ final class CameraConfigurationManager {
           throw new IllegalArgumentException("Bad rotation: " + displayRotation);
         }
     }
-    Log.i(TAG, "Display at: " + cwRotationFromNaturalToDisplay);
+    logger.i(TAG, "Display at: " + cwRotationFromNaturalToDisplay);
 
     int cwRotationFromNaturalToCamera = camera.getOrientation();
-    Log.i(TAG, "Camera at: " + cwRotationFromNaturalToCamera);
+    logger.i(TAG, "Camera at: " + cwRotationFromNaturalToCamera);
 
     // Still not 100% sure about this. But acts like we need to flip this:
     if (camera.getFacing() == CameraFacing.FRONT) {
       cwRotationFromNaturalToCamera = (360 - cwRotationFromNaturalToCamera) % 360;
-      Log.i(TAG, "Front camera overriden to: " + cwRotationFromNaturalToCamera);
+      logger.i(TAG, "Front camera overriden to: " + cwRotationFromNaturalToCamera);
     }
 
     cwRotationFromDisplayToCamera =
         (360 + cwRotationFromNaturalToCamera - cwRotationFromNaturalToDisplay) % 360;
-    Log.i(TAG, "Final display orientation: " + cwRotationFromDisplayToCamera);
+    logger.i(TAG, "Final display orientation: " + cwRotationFromDisplayToCamera);
     if (camera.getFacing() == CameraFacing.FRONT) {
-      Log.i(TAG, "Compensating rotation for front camera");
+      logger.i(TAG, "Compensating rotation for front camera");
       cwNeededRotation = (360 - cwRotationFromDisplayToCamera) % 360;
     } else {
       cwNeededRotation = cwRotationFromDisplayToCamera;
     }
-    Log.i(TAG, "Clockwise rotation from display to camera: " + cwNeededRotation);
+    logger.i(TAG, "Clockwise rotation from display to camera: " + cwNeededRotation);
 
     resolution = new Point(width, height);
-    Log.i(TAG, "Screen resolution in current orientation: " + resolution);
+    logger.i(TAG, "Screen resolution in current orientation: " + resolution);
     cameraResolution = findBestPreviewSizeValue(parameters, resolution);
-    Log.i(TAG, "Camera resolution: " + cameraResolution);
+    logger.i(TAG, "Camera resolution: " + cameraResolution);
     bestPreviewSize = findBestPreviewSizeValue(parameters, resolution);
-    Log.i(TAG, "Best available preview size: " + bestPreviewSize);
+    logger.i(TAG, "Best available preview size: " + bestPreviewSize);
 
     boolean isScreenPortrait = resolution.x < resolution.y;
     boolean isPreviewSizePortrait = bestPreviewSize.x < bestPreviewSize.y;
@@ -125,7 +131,7 @@ final class CameraConfigurationManager {
     } else {
       previewSizeOnScreen = new Point(bestPreviewSize.y, bestPreviewSize.x);
     }
-    Log.i(TAG, "Preview size on screen: " + previewSizeOnScreen);
+    logger.i(TAG, "Preview size on screen: " + previewSizeOnScreen);
   }
 
   void setDesiredCameraParameters(OpenCamera camera, boolean safeMode) {
@@ -134,15 +140,15 @@ final class CameraConfigurationManager {
     Camera.Parameters parameters = theCamera.getParameters();
 
     if (parameters == null) {
-      Log.w(TAG,
+      logger.w(TAG,
           "Device error: no camera parameters are available. Proceeding without configuration.");
       return;
     }
 
-    Log.i(TAG, "Initial camera parameters: " + parameters.flatten());
+    logger.i(TAG, "Initial camera parameters: " + parameters.flatten());
 
     if (safeMode) {
-      Log.w(TAG, "In camera config safe mode -- most settings will not be honored");
+      logger.w(TAG, "In camera config safe mode -- most settings will not be honored");
     }
 
     // Maybe selected auto-focus but not available, so fall through here:
@@ -150,7 +156,7 @@ final class CameraConfigurationManager {
     if (!safeMode) {
       List<String> supportedFocusModes = parameters.getSupportedFocusModes();
       focusMode =
-          findSettableValue("focus mode", supportedFocusModes, Camera.Parameters.FOCUS_MODE_AUTO);
+          findSettableValue("focus mode", supportedFocusModes, logger, Camera.Parameters.FOCUS_MODE_AUTO);
     }
     if (focusMode != null) {
       parameters.setFocusMode(focusMode);
@@ -166,7 +172,7 @@ final class CameraConfigurationManager {
     Camera.Size afterSize = afterParameters.getPreviewSize();
     if (afterSize != null && (bestPreviewSize.x != afterSize.width
         || bestPreviewSize.y != afterSize.height)) {
-      Log.w(TAG,
+      logger.w(TAG,
           "Camera said it supported preview size "
               + bestPreviewSize.x
               + 'x'
@@ -194,7 +200,7 @@ final class CameraConfigurationManager {
 
     List<Camera.Size> rawSupportedSizes = parameters.getSupportedPreviewSizes();
     if (rawSupportedSizes == null) {
-      Log.w(TAG, "Device returned no supported preview sizes; using default");
+      logger.w(TAG, "Device returned no supported preview sizes; using default");
       Camera.Size defaultSize = parameters.getPreviewSize();
       return new Point(defaultSize.width, defaultSize.height);
     }
@@ -223,7 +229,7 @@ final class CameraConfigurationManager {
             .append(supportedPreviewSize.height)
             .append(' ');
       }
-      Log.i(TAG, "Supported preview sizes: " + previewSizesString);
+      logger.i(TAG, "Supported preview sizes: " + previewSizesString);
     }
 
     Point bestSize = null;
@@ -245,7 +251,7 @@ final class CameraConfigurationManager {
 
       if (maybeFlippedWidth == screenResolution.x && maybeFlippedHeight == screenResolution.y) {
         Point exactPoint = new Point(realWidth, realHeight);
-        Log.i(TAG, "Found preview size exactly matching screen size: " + exactPoint);
+        logger.i(TAG, "Found preview size exactly matching screen size: " + exactPoint);
         return exactPoint;
       }
       float aspectRatio = (float) maybeFlippedWidth / (float) maybeFlippedHeight;
@@ -259,26 +265,26 @@ final class CameraConfigurationManager {
     if (bestSize == null) {
       Camera.Size defaultSize = parameters.getPreviewSize();
       bestSize = new Point(defaultSize.width, defaultSize.height);
-      Log.i(TAG, "No suitable preview sizes, using default: " + bestSize);
+      logger.i(TAG, "No suitable preview sizes, using default: " + bestSize);
     }
 
-    Log.i(TAG, "Found best approximate preview size: " + bestSize);
+    logger.i(TAG, "Found best approximate preview size: " + bestSize);
     return bestSize;
   }
 
-  private static String findSettableValue(String name, Collection<String> supportedValues,
+  private static String findSettableValue(String name, Collection<String> supportedValues, SimpleLog logger,
       String... desiredValues) {
-    Log.i(TAG, "Requesting " + name + " value from among: " + Arrays.toString(desiredValues));
-    Log.i(TAG, "Supported " + name + " values: " + supportedValues);
+    logger.i(TAG, "Requesting " + name + " value from among: " + Arrays.toString(desiredValues));
+    logger.i(TAG, "Supported " + name + " values: " + supportedValues);
     if (supportedValues != null) {
       for (String desiredValue : desiredValues) {
         if (supportedValues.contains(desiredValue)) {
-          Log.i(TAG, "Can set " + name + " to: " + desiredValue);
+          logger.i(TAG, "Can set " + name + " to: " + desiredValue);
           return desiredValue;
         }
       }
     }
-    Log.i(TAG, "No supported values match");
+    logger.i(TAG, "No supported values match");
     return null;
   }
 
@@ -301,35 +307,35 @@ final class CameraConfigurationManager {
   }
 
   void setTorchEnabled(Camera.Parameters parameters, boolean enabled, boolean safeMode) {
-    setTorchEnabled(parameters, enabled);
+    setTorchEnabled(parameters, enabled, logger);
 
     if (!safeMode) {
-      setBestExposure(parameters, enabled);
+      setBestExposure(parameters, enabled, logger);
     }
   }
 
-  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled) {
+  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled, SimpleLog logger) {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
     if (enabled) {
       flashMode =
-          findSettableValue("flash mode", supportedFlashModes, Camera.Parameters.FLASH_MODE_TORCH,
+          findSettableValue("flash mode", supportedFlashModes, logger, Camera.Parameters.FLASH_MODE_TORCH,
               Camera.Parameters.FLASH_MODE_ON);
     } else {
       flashMode =
-          findSettableValue("flash mode", supportedFlashModes, Camera.Parameters.FLASH_MODE_OFF);
+          findSettableValue("flash mode", supportedFlashModes, logger, Camera.Parameters.FLASH_MODE_OFF);
     }
     if (flashMode != null) {
       if (flashMode.equals(parameters.getFlashMode())) {
-        Log.i(TAG, "Flash mode already set to " + flashMode);
+        logger.i(TAG, "Flash mode already set to " + flashMode);
       } else {
-        Log.i(TAG, "Setting flash mode to " + flashMode);
+        logger.i(TAG, "Setting flash mode to " + flashMode);
         parameters.setFlashMode(flashMode);
       }
     }
   }
 
-  public static void setBestExposure(Camera.Parameters parameters, boolean lightOn) {
+  public static void setBestExposure(Camera.Parameters parameters, boolean lightOn, SimpleLog logger) {
 
     int minExposure = parameters.getMinExposureCompensation();
     int maxExposure = parameters.getMaxExposureCompensation();
@@ -342,15 +348,15 @@ final class CameraConfigurationManager {
       // Clamp value:
       compensationSteps = Math.max(Math.min(compensationSteps, maxExposure), minExposure);
       if (parameters.getExposureCompensation() == compensationSteps) {
-        Log.i(TAG, "Exposure compensation already set to " + compensationSteps + " / "
+        logger.i(TAG, "Exposure compensation already set to " + compensationSteps + " / "
             + actualCompensation);
       } else {
-        Log.i(TAG,
+        logger.i(TAG,
             "Setting exposure compensation to " + compensationSteps + " / " + actualCompensation);
         parameters.setExposureCompensation(compensationSteps);
       }
     } else {
-      Log.i(TAG, "Camera does not support exposure compensation");
+      logger.i(TAG, "Camera does not support exposure compensation");
     }
   }
 }

@@ -22,7 +22,6 @@ import android.graphics.PointF;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -71,6 +70,7 @@ public class QRCodeReaderView extends SurfaceView
   private boolean mQrDecodingEnabled = true;
   private DecodeFrameTask decodeFrameTask;
   private Map<DecodeHintType, Object> decodeHints;
+  private SimpleLog logger = new SimpleLog();
 
   public QRCodeReaderView(Context context) {
     this(context, null);
@@ -84,7 +84,7 @@ public class QRCodeReaderView extends SurfaceView
     }
 
     if (checkCameraHardware()) {
-      mCameraManager = new CameraManager(getContext());
+      mCameraManager = new CameraManager(getContext(), logger);
       mCameraManager.setPreviewCallback(this);
       getHolder().addCallback(this);
       setBackCamera();
@@ -93,6 +93,10 @@ public class QRCodeReaderView extends SurfaceView
     }
   }
 
+  public void setLoggingEnabled(boolean enabled) {
+    logger.setLoggingEnabled(enabled);
+  }
+  
   /**
    * Set the callback to return decoding result
    *
@@ -206,13 +210,13 @@ public class QRCodeReaderView extends SurfaceView
    ****************************************************/
 
   @Override public void surfaceCreated(SurfaceHolder holder) {
-    Log.d(TAG, "surfaceCreated");
+    logger.d(TAG, "surfaceCreated");
 
     try {
       // Indicate camera, our View dimensions
       mCameraManager.openDriver(holder, this.getWidth(), this.getHeight());
     } catch (IOException e) {
-      Log.w(TAG, "Can not openDriver: " + e.getMessage());
+      logger.w(TAG, "Can not openDriver: " + e.getMessage());
       mCameraManager.closeDriver();
     }
 
@@ -220,21 +224,21 @@ public class QRCodeReaderView extends SurfaceView
       mQRCodeReader = new QRCodeReader();
       mCameraManager.startPreview();
     } catch (Exception e) {
-      Log.e(TAG, "Exception: " + e.getMessage());
+      logger.e(TAG, "Exception: " + e.getMessage());
       mCameraManager.closeDriver();
     }
   }
 
   @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    Log.d(TAG, "surfaceChanged");
+    logger.d(TAG, "surfaceChanged");
 
     if (holder.getSurface() == null) {
-      Log.e(TAG, "Error: preview surface does not exist");
+      logger.e(TAG, "Error: preview surface does not exist");
       return;
     }
 
     if (mCameraManager.getPreviewSize() == null) {
-      Log.e(TAG, "Error: preview size does not exist");
+      logger.e(TAG, "Error: preview size does not exist");
       return;
     }
 
@@ -251,7 +255,7 @@ public class QRCodeReaderView extends SurfaceView
   }
 
   @Override public void surfaceDestroyed(SurfaceHolder holder) {
-    Log.d(TAG, "surfaceDestroyed");
+    logger.d(TAG, "surfaceDestroyed");
 
     mCameraManager.setPreviewCallback(null);
     mCameraManager.stopPreview();
@@ -265,7 +269,7 @@ public class QRCodeReaderView extends SurfaceView
       return;
     }
 
-    decodeFrameTask = new DecodeFrameTask(this, decodeHints);
+    decodeFrameTask = new DecodeFrameTask(this, decodeHints, logger);
     decodeFrameTask.execute(data);
   }
 
@@ -331,10 +335,12 @@ public class QRCodeReaderView extends SurfaceView
     private final WeakReference<Map<DecodeHintType, Object>> hintsRef;
     private final QRToViewPointTransformer qrToViewPointTransformer =
         new QRToViewPointTransformer();
+    private SimpleLog logger;
 
-    public DecodeFrameTask(QRCodeReaderView view, Map<DecodeHintType, Object> hints) {
+    public DecodeFrameTask(QRCodeReaderView view, Map<DecodeHintType, Object> hints, SimpleLog logger) {
       viewRef = new WeakReference<>(view);
       hintsRef = new WeakReference<>(hints);
+      this.logger = logger;
     }
 
     @Override protected Result doInBackground(byte[]... params) {
@@ -353,11 +359,11 @@ public class QRCodeReaderView extends SurfaceView
       try {
         return view.mQRCodeReader.decode(bitmap, hintsRef.get());
       } catch (ChecksumException e) {
-        Log.d(TAG, "ChecksumException", e);
+        logger.d(TAG, "ChecksumException", e);
       } catch (NotFoundException e) {
-        Log.d(TAG, "No QR Code found");
+        logger.d(TAG, "No QR Code found");
       } catch (FormatException e) {
-        Log.d(TAG, "FormatException", e);
+        logger.d(TAG, "FormatException", e);
       } finally {
         view.mQRCodeReader.reset();
       }

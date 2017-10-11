@@ -19,11 +19,13 @@ package com.google.zxing.client.android.camera;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.util.Log;
 import android.view.SurfaceHolder;
+
+import com.dlazaro66.qrcodereaderview.SimpleLog;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.client.android.camera.open.OpenCamera;
 import com.google.zxing.client.android.camera.open.OpenCameraInterface;
+
 import java.io.IOException;
 
 /**
@@ -52,10 +54,13 @@ public final class CameraManager {
   // since We're using all view size while detecting QR-Codes.
   private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
   private long autofocusIntervalInMs = AutoFocusManager.DEFAULT_AUTO_FOCUS_INTERVAL_MS;
+  
+  private SimpleLog logger;
 
-  public CameraManager(Context context) {
+  public CameraManager(Context context, SimpleLog logger) {
     this.context = context;
-    this.configManager = new CameraConfigurationManager(context);
+    this.configManager = new CameraConfigurationManager(context, logger);
+    this.logger = logger;
   }
 
   public void setPreviewCallback(Camera.PreviewCallback previewCallback) {
@@ -101,7 +106,7 @@ public final class CameraManager {
       throws IOException {
     OpenCamera theCamera = openCamera;
     if (!isOpen()) {
-      theCamera = OpenCameraInterface.open(requestedCameraId);
+      theCamera = OpenCameraInterface.open(requestedCameraId, logger);
       if (theCamera == null || theCamera.getCamera() == null) {
         throw new IOException("Camera.open() failed to return object from driver");
       }
@@ -124,8 +129,8 @@ public final class CameraManager {
       configManager.setDesiredCameraParameters(theCamera, false);
     } catch (RuntimeException re) {
       // Driver failed
-      Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
-      Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
+      logger.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
+      logger.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
       // Reset:
       if (parametersFlattened != null) {
         parameters = cameraObject.getParameters();
@@ -135,7 +140,7 @@ public final class CameraManager {
           configManager.setDesiredCameraParameters(theCamera, true);
         } catch (RuntimeException re2) {
           // Well, darn. Give up
-          Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
+          logger.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
         }
       }
     }
@@ -169,7 +174,7 @@ public final class CameraManager {
       }
       configManager.setTorchEnabled(theCamera.getCamera(), enabled);
       if (wasAutoFocusManager) {
-        autoFocusManager = new AutoFocusManager(theCamera.getCamera());
+        autoFocusManager = new AutoFocusManager(theCamera.getCamera(), logger);
         autoFocusManager.start();
       }
     }
@@ -201,7 +206,7 @@ public final class CameraManager {
     if (theCamera != null && !previewing) {
       theCamera.getCamera().startPreview();
       previewing = true;
-      autoFocusManager = new AutoFocusManager(theCamera.getCamera());
+      autoFocusManager = new AutoFocusManager(theCamera.getCamera(), logger);
       autoFocusManager.setAutofocusInterval(autofocusIntervalInMs);
     }
   }

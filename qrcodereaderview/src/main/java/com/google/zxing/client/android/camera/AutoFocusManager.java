@@ -34,7 +34,9 @@ package com.google.zxing.client.android.camera;
 
 import android.hardware.Camera;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.dlazaro66.qrcodereaderview.SimpleLog;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
@@ -58,12 +60,15 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
   private final boolean useAutoFocus;
   private final Camera camera;
   private AsyncTask<?, ?, ?> outstandingTask;
+  
+  private SimpleLog logger;
 
-  AutoFocusManager(Camera camera) {
+  AutoFocusManager(Camera camera, SimpleLog logger) {
     this.camera = camera;
+    this.logger = logger;
     String currentFocusMode = camera.getParameters().getFocusMode();
     useAutoFocus = FOCUS_MODES_CALLING_AF.contains(currentFocusMode);
-    Log.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " + useAutoFocus);
+    logger.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " + useAutoFocus);
     start();
   }
 
@@ -86,7 +91,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
         newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         outstandingTask = newTask;
       } catch (RejectedExecutionException ree) {
-        Log.w(TAG, "Could not request auto focus", ree);
+        logger.w(TAG, "Could not request auto focus", ree);
       }
     }
   }
@@ -100,7 +105,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
           focusing = true;
         } catch (RuntimeException re) {
           // Have heard RuntimeException reported in Android 4.0.x+; continue?
-          Log.w(TAG, "Unexpected exception while focusing", re);
+          logger.w(TAG, "Unexpected exception while focusing", re);
           // Try again later to keep cycle going
           autoFocusAgainLater();
         }
@@ -126,7 +131,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
         camera.cancelAutoFocus();
       } catch (RuntimeException re) {
         // Have heard RuntimeException reported in Android 4.0.x+; continue?
-        Log.w(TAG, "Unexpected exception while cancelling focusing", re);
+        logger.w(TAG, "Unexpected exception while cancelling focusing", re);
       }
     }
   }
