@@ -60,7 +60,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
   private final boolean useAutoFocus;
   private final Camera camera;
   private AsyncTask<?, ?, ?> outstandingTask;
-  
+
   private SimpleLog logger;
 
   AutoFocusManager(Camera camera, SimpleLog logger) {

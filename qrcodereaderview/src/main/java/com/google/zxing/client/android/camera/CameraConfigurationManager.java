@@ -58,7 +58,7 @@ final class CameraConfigurationManager {
   private Point previewSizeOnScreen;
   private int cwRotationFromDisplayToCamera;
   private int cwNeededRotation;
-  
+
   private SimpleLog logger;
 
   CameraConfigurationManager(Context context, SimpleLog logger) {
@@ -156,7 +156,10 @@ final class CameraConfigurationManager {
     if (!safeMode) {
       List<String> supportedFocusModes = parameters.getSupportedFocusModes();
       focusMode =
-          findSettableValue("focus mode", supportedFocusModes, logger, Camera.Parameters.FOCUS_MODE_AUTO);
+          findSettableValue("focus mode",
+                  supportedFocusModes,
+                  logger,
+                  Camera.Parameters.FOCUS_MODE_AUTO);
     }
     if (focusMode != null) {
       parameters.setFocusMode(focusMode);
@@ -272,7 +275,9 @@ final class CameraConfigurationManager {
     return bestSize;
   }
 
-  private static String findSettableValue(String name, Collection<String> supportedValues, SimpleLog logger,
+  private static String findSettableValue(String name,
+                                          Collection<String> supportedValues,
+                                          SimpleLog logger,
       String... desiredValues) {
     logger.i(TAG, "Requesting " + name + " value from among: " + Arrays.toString(desiredValues));
     logger.i(TAG, "Supported " + name + " values: " + supportedValues);
@@ -314,16 +319,23 @@ final class CameraConfigurationManager {
     }
   }
 
-  public static void setTorchEnabled(Camera.Parameters parameters, boolean enabled, SimpleLog logger) {
+  public static void setTorchEnabled(Camera.Parameters parameters,
+                                     boolean enabled,
+                                     SimpleLog logger) {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
     if (enabled) {
       flashMode =
-          findSettableValue("flash mode", supportedFlashModes, logger, Camera.Parameters.FLASH_MODE_TORCH,
+          findSettableValue("flash mode", supportedFlashModes,
+                  logger,
+                  Camera.Parameters.FLASH_MODE_TORCH,
               Camera.Parameters.FLASH_MODE_ON);
     } else {
       flashMode =
-          findSettableValue("flash mode", supportedFlashModes, logger, Camera.Parameters.FLASH_MODE_OFF);
+          findSettableValue("flash mode",
+                  supportedFlashModes,
+                  logger,
+                  Camera.Parameters.FLASH_MODE_OFF);
     }
     if (flashMode != null) {
       if (flashMode.equals(parameters.getFlashMode())) {
@@ -335,7 +347,9 @@ final class CameraConfigurationManager {
     }
   }
 
-  public static void setBestExposure(Camera.Parameters parameters, boolean lightOn, SimpleLog logger) {
+  public static void setBestExposure(Camera.Parameters parameters,
+                                     boolean lightOn,
+                                     SimpleLog logger) {
 
     int minExposure = parameters.getMinExposureCompensation();
     int maxExposure = parameters.getMaxExposureCompensation();

@@ -96,7 +96,7 @@ public class QRCodeReaderView extends SurfaceView
   public void setLoggingEnabled(boolean enabled) {
     logger.setLoggingEnabled(enabled);
   }
-  
+
   /**
    * Set the callback to return decoding result
    *
@@ -337,7 +337,9 @@ public class QRCodeReaderView extends SurfaceView
         new QRToViewPointTransformer();
     private SimpleLog logger;
 
-    public DecodeFrameTask(QRCodeReaderView view, Map<DecodeHintType, Object> hints, SimpleLog logger) {
+    public DecodeFrameTask(QRCodeReaderView view,
+                           Map<DecodeHintType, Object> hints,
+                           SimpleLog logger) {
       viewRef = new WeakReference<>(view);
       hintsRef = new WeakReference<>(hints);
       this.logger = logger;

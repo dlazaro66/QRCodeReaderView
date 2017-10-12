@@ -54,7 +54,7 @@ public final class CameraManager {
   // since We're using all view size while detecting QR-Codes.
   private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
   private long autofocusIntervalInMs = AutoFocusManager.DEFAULT_AUTO_FOCUS_INTERVAL_MS;
-  
+
   private SimpleLog logger;
 
   public CameraManager(Context context, SimpleLog logger) {
