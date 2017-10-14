@@ -261,7 +261,8 @@ public class QRCodeReaderView extends SurfaceView
   // Called when camera take a frame
   @Override public void onPreviewFrame(byte[] data, Camera camera) {
     if (!mQrDecodingEnabled || decodeFrameTask != null
-        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING) {
+        && (decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING
+            || decodeFrameTask.getStatus() == AsyncTask.Status.PENDING)) {
       return;
     }
 
