@@ -43,6 +43,7 @@ public class PointsOverlayView extends View {
     super.draw(canvas);
     if (points != null) {
       for (PointF pointF : points) {
+        //画圆，指二维码识别时，对应的三个点的半径大小
         canvas.drawCircle(pointF.x, pointF.y, 10, paint);
       }
     }
