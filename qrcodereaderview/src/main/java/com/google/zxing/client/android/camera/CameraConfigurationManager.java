@@ -325,17 +325,16 @@ final class CameraConfigurationManager {
     List<String> supportedFlashModes = parameters.getSupportedFlashModes();
     String flashMode;
     if (enabled) {
-      flashMode =
-          findSettableValue("flash mode", supportedFlashModes,
-                  logger,
-                  Camera.Parameters.FLASH_MODE_TORCH,
+      flashMode = findSettableValue("flash mode",
+              supportedFlashModes,
+              logger,
+              Camera.Parameters.FLASH_MODE_TORCH,
               Camera.Parameters.FLASH_MODE_ON);
     } else {
-      flashMode =
-          findSettableValue("flash mode",
-                  supportedFlashModes,
-                  logger,
-                  Camera.Parameters.FLASH_MODE_OFF);
+      flashMode = findSettableValue("flash mode",
+              supportedFlashModes,
+              logger,
+              Camera.Parameters.FLASH_MODE_OFF);
     }
     if (flashMode != null) {
       if (flashMode.equals(parameters.getFlashMode())) {
