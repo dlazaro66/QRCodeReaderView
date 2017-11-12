@@ -4,43 +4,43 @@ import android.util.Log;
 
 public class SimpleLog {
 
-  private boolean loggingEnabled = false;
+  private static boolean loggingEnabled = false;
 
-  public void setLoggingEnabled(boolean loggingEnabled) {
-      this.loggingEnabled = loggingEnabled;
+  public static void setLoggingEnabled(boolean enabled) {
+      loggingEnabled = enabled;
   }
 
-  public void d(String tag, String text) {
+  public static void d(String tag, String text) {
       if (loggingEnabled) {
           Log.d(tag, text);
       }
   }
 
-  public void w(String tag, String text) {
+  public static void w(String tag, String text) {
       if (loggingEnabled) {
           Log.w(tag, text);
       }
   }
 
-  public void w(String tag, String text, Throwable e) {
+  public static void w(String tag, String text, Throwable e) {
       if (loggingEnabled) {
           Log.w(tag, text, e);
       }
   }
 
-  public void e(String tag, String text) {
+  public static void e(String tag, String text) {
       if (loggingEnabled) {
           Log.e(tag, text);
       }
   }
 
-  public void d(String tag, String text, Throwable e) {
+  public static void d(String tag, String text, Throwable e) {
       if (loggingEnabled) {
           Log.d(tag, text, e);
       }
   }
 
-  public void i(String tag, String text) {
+  public static void i(String tag, String text) {
       if (loggingEnabled) {
           Log.i(tag, text);
       }

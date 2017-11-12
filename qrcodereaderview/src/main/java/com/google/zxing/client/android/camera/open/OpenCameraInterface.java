@@ -41,11 +41,11 @@ public final class OpenCameraInterface {
    *  camera is returned if possible or else any camera
    * @return handle to {@link OpenCamera} that was opened
    */
-  public static OpenCamera open(int cameraId, SimpleLog logger) {
+  public static OpenCamera open(int cameraId) {
 
     int numCameras = Camera.getNumberOfCameras();
     if (numCameras == 0) {
-      logger.w(TAG, "No cameras!");
+      SimpleLog.w(TAG, "No cameras!");
       return null;
     }
 
@@ -73,14 +73,14 @@ public final class OpenCameraInterface {
 
     Camera camera;
     if (index < numCameras) {
-      logger.i(TAG, "Opening camera #" + index);
+      SimpleLog.i(TAG, "Opening camera #" + index);
       camera = Camera.open(index);
     } else {
       if (explicitRequest) {
-        logger.w(TAG, "Requested camera does not exist: " + cameraId);
+        SimpleLog.w(TAG, "Requested camera does not exist: " + cameraId);
         camera = null;
       } else {
-        logger.i(TAG, "No camera facing " + CameraFacing.BACK + "; returning camera #0");
+        SimpleLog.i(TAG, "No camera facing " + CameraFacing.BACK + "; returning camera #0");
         camera = Camera.open(0);
         selectedCameraInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(0, selectedCameraInfo);
