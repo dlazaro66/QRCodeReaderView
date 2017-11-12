@@ -3,7 +3,7 @@
 buildscript {
   repositories {
     jcenter()
-      google()
+    google()
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:3.0.0'
@@ -22,7 +22,7 @@ allprojects {
   apply plugin: 'pmd'
 
   task checkstyle(type: Checkstyle) {
-    configFile file("${project.rootDir}/checkstyle.xml")
+    configFile rootProject.file('checkstyle.xml')
     source 'src'
     include '**/*.java'
     exclude '**/gen/**'
