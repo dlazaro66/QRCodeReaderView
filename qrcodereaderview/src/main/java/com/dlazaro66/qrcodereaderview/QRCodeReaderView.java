@@ -102,6 +102,11 @@ public class QRCodeReaderView extends SurfaceView
         mOnQRCodeReadListener = onQRCodeReadListener;
     }
 
+    /**
+     * Enable/disable logging, false by default
+     *
+     * @param enabled logging enabled/disabled.
+     */
     public void setLoggingEnabled(boolean enabled) {
         SimpleLog.setLoggingEnabled(enabled);
     }
