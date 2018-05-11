@@ -201,6 +201,7 @@ public final class CameraManager {
   public synchronized void startPreview() {
     OpenCamera theCamera = openCamera;
     if (theCamera != null && !previewing) {
+      theCamera.getCamera().setPreviewCallback(previewCallback);
       theCamera.getCamera().startPreview();
       previewing = true;
       autoFocusManager = new AutoFocusManager(theCamera.getCamera());
