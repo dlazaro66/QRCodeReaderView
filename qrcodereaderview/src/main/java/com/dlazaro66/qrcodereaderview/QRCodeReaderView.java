@@ -134,6 +134,7 @@ public class QRCodeReaderView extends SurfaceView
      * Starts camera preview and decoding
      */
     public void startCamera() {
+        mCameraManager.setPreviewCallback(this);
         mCameraManager.startPreview();
     }
 
