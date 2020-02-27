@@ -63,7 +63,7 @@ class DecoderActivity : AppCompatActivity(), OnRequestPermissionsResultCallback,
     // Called when a QR is decoded
     // "text" : the text encoded in QR
     // "points" : points where QR control points are placed
-    override fun onQRCodeRead(text: String, points: Array<PointF>) {
+    override fun onQRCodeRead(text: String?, points: Array<PointF?>?) {
         resultTextView?.text = text
         pointsOverlayView?.setPoints(points)
     }

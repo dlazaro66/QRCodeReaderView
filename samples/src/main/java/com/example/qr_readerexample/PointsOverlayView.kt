@@ -10,7 +10,7 @@ import android.view.View
 
 class PointsOverlayView : View {
     private var paint: Paint? = null
-    private var mPoints: Array<PointF>? = null
+    private var mPoints: Array<PointF?>? = null
 
     constructor(context: Context?) : super(context) {
         init()
@@ -30,7 +30,7 @@ class PointsOverlayView : View {
         paint?.style = Paint.Style.FILL
     }
 
-    fun setPoints(points: Array<PointF>) {
+    fun setPoints(points: Array<PointF?>?) {
         this.mPoints = points
         invalidate()
     }
@@ -39,7 +39,7 @@ class PointsOverlayView : View {
         super.draw(canvas)
         mPoints?.let {
             it.forEach { it1 ->
-                paint?.let { it2 -> canvas.drawCircle(it1.x, it1.y, 10f, it2) }
+                paint?.let { it2 -> it1?.x?.let { it3 -> canvas.drawCircle(it3, it1.y, 10f, it2) } }
             }
         }
     }

@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.zxing.client.android.camera.open;
+package com.google.zxing.client.android.camera.open
 
-public enum CameraFacing {
-
-  BACK,  // must be value 0!
-  FRONT, // must be value 1!
-
+enum class CameraFacing {
+    BACK,  // must be value 0!
+    FRONT
+    // must be value 1!
 }
