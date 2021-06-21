@@ -1,29 +1,36 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-  compileSdkVersion 26
-  buildToolsVersion '26.0.2'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
-  lintOptions {
-    abortOnError false
-  }
-
-  defaultConfig {
-    applicationId "com.example.qr_readerexample"
-    minSdkVersion 14
-    targetSdkVersion 26
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+    lintOptions {
+        abortOnError false
     }
-  }
+
+    defaultConfig {
+        applicationId "com.example.qr_readerexample"
+        minSdkVersion 14
+        targetSdkVersion 29
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
 }
 
 dependencies {
-  compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.2'
-  compile 'com.android.support:support-v4:26.1.0'
-  compile 'com.android.support:design:26.1.0'
+    implementation project(path: ':qrcodereaderview')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
