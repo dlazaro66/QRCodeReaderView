@@ -29,12 +29,12 @@ android {
         abortOnError false
     }
 
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName libVersionCode
     }
@@ -48,11 +48,11 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.zxing:core:3.2.1'
-    testImplementation 'junit:junit:4.13'
+    implementation 'com.google.zxing:core:3.4.0'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:2.7.5'
     testImplementation "org.robolectric:robolectric:4.2.1"
-    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "androidx.core:core-ktx:1.5.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
